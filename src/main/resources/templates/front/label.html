@@ -1,0 +1,61 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title th:text="${session.settings.mainTitle}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <meta name="msapplication-TileColor" content="#0e90d2">
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/app.css}">
+</head>
+
+<body id="blog-article-sidebar">
+
+<!--公共头部开始-->
+<div th:replace="/front/head :: head (index=2)">
+</div>
+<!--公共头部结尾-->
+
+<!-- content srart -->
+<div class="am-g am-g-fixed blog-fixed blog-content">
+    <div class="am-u-sm-12">
+        <h1 class="blog-text-center">-- 标签 --</h1>
+        <div class="timeline-year">
+            <th:block th:each="item : ${data}">
+                <th:block th:if="${!item.child.isEmpty()}">
+                    <h2 th:text="${item.root.name}">JAVA</h2>
+                    <hr>
+                    <ul th:if="${!item.child.isEmpty()}">
+                        <li th:each="child : ${item.child}">
+                            <a th:href="@{'/main/search-la/'+${child.id}}"><span class="am-u-sm-4 am-u-md-2 timeline-span"
+                                                              th:text="${child.name}">Spring Boot</span></a>
+                            <span class="am-u-sm-4 am-u-md-2 am-hide-sm-only am-u-sm-offset-4 am-u-md-offset-8" th:text="${session.myAccount.name}">Uychen</span>
+                        </li>
+                    </ul>
+                </th:block>
+            </th:block>
+        </div>
+        <hr>
+    </div>
+
+
+</div>
+<!-- content end -->
+
+<div th:replace="/front/footer :: footer"></div>
+
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+
+    <style>
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="mx-auto">
+                <img class="img-raised rounded-circle img-fluid" th:src="${session.CurrentAdmin.head}"  width="140" height="140"
+                     style="overflow:hidden;height: 140px;"/>
+            </div>
+        </div>
+        <br/>
+        <div class="row" align="center">
+            <div class="mx-auto">
+                <h5 th:text="${session.CurrentAdmin.name}">Hellow</h5>
+                <p class="text text-info">角色:Admin</p>
+            </div>
+        </div>
+
+        <div class="row" align="center">
+            <div class="mx-auto">
+                <p th:text="${session.CurrentAdmin.sign}"></p>
+            </div>
+        </div>
+        <hr/>
+
+        <h5 class="text-success">Update</h5>
+        <br/>
+
+        <form method="post" th:action="@{/admin/update-admin}" id="updateAccountForm" enctype="multipart/form-data">
+            <input type="hidden" name="_method" value="PUT"/>
+            <div class="row">
+                <div class="col-sm-5 mx-auto">
+                    <small class="form-text text-muted text-center">选择性输入内容更新</small>
+                    <br>
+                    <input type="file" name="head"  id="customFileLang" style="display: none;">
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" class="form-control" id="showText" placeholder="更换头像" readonly/>
+
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="uploadBtn">上传</button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-group input-group-sm col-sm-5 mx-auto">
+                   <!-- <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">用户名</span>
+                    </div>-->
+                    <input type="text" class="form-control" name="name" placeholder="用户名"/>
+                </div>
+            </div>
+
+            <br/>
+            <div class="row">
+                <div class="input-group input-group-sm col-sm-5 mx-auto">
+                    <textarea type="text" name="sign" class="form-control text-success" placeholder="签名"
+                              maxlength="300"></textarea>
+                </div>
+            </div>
+            <br/><br/>
+            <div class="row">
+                <div class="mx-auto">
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#pwdmodal">修改密码
+                    </button>&nbsp;&nbsp;
+                    <button type="submit" class="btn btn-success">更新</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="pwdmodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title">更新密码</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:action="@{/admin/update-admin}" method="post" id="updatePwdForm">
+                    <input type="hidden" name="_method" value="PUT"/>
+                    <!-- 模态框主体 -->
+                    <div class="modal-body">
+                        <div class="form-inline">
+                            <label for="oldPwd">输入原密码：</label>
+                            <input type="password" name="old-pwd" class="form-control" id="oldPwd"/>
+                        </div>
+                        <br/>
+                        <div class="form-inline">
+                            <label for="newPwd">输入新密码：</label>
+                            <input type="password" name="password" class="form-control" id="newPwd"/>
+                        </div>
+                    </div>
+
+                    <!-- 模态框底部 -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-success">确认</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="util :: bootalert(msg = '')"></div>
+
+    <script>
+        $('input[id=customFileLang]').change(function () {
+            var msg = $(this).val();
+            if (msg == null || msg.length == 0) {
+                msg = "更换头像";
+            }
+            $('#showText').val(msg);
+        });
+        
+        $("#uploadBtn").click(function () {
+            $('input[id=customFileLang]').click();
+        });
+
+        $('#updateAccountForm').submit(function (e) {
+            $(this).ajaxSubmit(function (data) {
+                if (data.status == 0) {
+                    item_4();
+                } else {
+                    alert(data.msg);
+                }
+            });
+            e.preventDefault();
+        });
+
+        var boot_alert = $('#my-boot-alert');
+
+        $("#updatePwdForm").submit(function (e) {
+            $("#pwdmodal").modal("hide");
+            $('.modal-backdrop').remove();
+            $(this).ajaxSubmit(function (data) {
+                if (data.status == 0) {
+                    $('#my-boot-alert-text').html("修改成功");
+                    boot_alert.modal('show');
+                } else {
+                    $('#my-boot-alert-text').html("ERROR:"+data.msg);
+                    boot_alert.modal('show');
+                }
+            });
+            e.preventDefault();
+        });
+    </script>
+
+</th:block>

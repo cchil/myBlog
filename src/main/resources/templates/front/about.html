@@ -1,0 +1,81 @@
+<div th:fragment="about" xmlns:th="http://www.thymeleaf.org">
+    <div class="am-u-md-4 am-u-sm-12 blog-sidebar">
+        <div class="blog-sidebar-widget blog-bor">
+            <h2 class="blog-text-center blog-title"><span>About</span></h2>
+<!--            <img th:src="${session.myAccount.head}" alt="about me" class="blog-entry-img">-->
+            <img src="http://tupian.qqjay.com/tou2/2017/1106/b1466c0a71cd8b89d89a918b6a533a58.jpg" alt="about me" width="200px" height="200px">
+            <p th:text="${session.myAccount.name}"></p>
+            <p th:text="${session.myAccount.sign}"></p>
+        </div>
+        <div class="blog-sidebar-widget blog-bor">
+            <h2 class="blog-text-center blog-title"><span>Contact ME</span></h2>
+            <p>
+                <a th:href="${session.settings.viewContactMe.qq}"><span
+                        class="am-icon-qq am-icon-fw am-primary blog-icon"></span></a>
+                <a th:href="${session.settings.viewContactMe.github}"><span
+                        class="am-icon-github am-icon-fw blog-icon"></span></a>
+                <a th:href="${session.settings.viewContactMe.weibo}"><span
+                        class="am-icon-weibo am-icon-fw blog-icon"></span></a>
+                <a th:href="${session.settings.viewContactMe.weixin}"><span
+                        class="am-icon-weixin am-icon-fw blog-icon"></span></a>
+            </p>
+        </div>
+        <div class="blog-clear-margin blog-sidebar-widget blog-bor am-g ">
+            <h2 class="blog-title"><span>TAG cloud</span></h2>
+            <div class="am-u-sm-12 blog-clear-padding">
+                <a th:each="item : ${session.settings.viewTagCloud.tagItems}" th:href="${item.href}" class="blog-tag"
+                   th:text="${item.title}">Amaze</a>
+            </div>
+        </div>
+
+<!--        <div class="blog-sidebar-widget blog-bor">
+            <h2 class="blog-title"><span th:text="${session.settings.viewOther.title}">么么哒</span></h2>
+            <ul class="am-list">
+                <li th:each="item : ${session.settings.viewOther.items}">
+                    <a th:href="${item.href}" th:text="${item.text}"></a>
+                </li>
+            </ul>
+        </div>-->
+
+
+
+
+
+
+
+
+
+
+        <!--广告位Div开始处-->
+<!--        <div class="blog-sidebar-widget blog-bor">
+            <h2 class="blog-title"><span>广告位</span></h2>
+            <ul class="am-list">
+                <li>
+                    <img th:src="@{/static/i/b2.jpg}" width="100%" height="120"/>
+                </li>
+                <br>
+                <li>
+                    <img th:src="@{/static/i/b3.jpg}" width="100%" height="120"/>
+                </li>
+                <br>
+                <li>
+                    <img th:src="@{/static/i/b1.jpg}" width="100%" height="120"/>
+                </li>
+            </ul>
+        </div>-->
+        <!--广告位Div结束-->
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+<!-- content end -->
+</div>

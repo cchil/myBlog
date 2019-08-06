@@ -1,0 +1,79 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <form th:action="@{/admin/insert-resources}" method="post" enctype="multipart/form-data" id="resourceForm">
+        <input type="hidden" name="_method" value="PUT">
+        <div class="container">
+            <br/>
+            <div class="row">
+                <div class="mx-auto">
+                    <h3>Push Resources</h3>
+                </div>
+            </div>
+            <hr/>
+            <br/>
+            <div class="row">
+                <div class="mx-auto w-50">
+                    <div class="form-group">
+                        <label for="title" class="text-success">标题:</label>
+                        <input type="text" id="title" name="title" class="form-control" placeholder="标题" required/>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label class="text-success">简述:</label>
+                        <textarea type="text" name="detail" class="form-control" placeholder="简述" maxlength="100"
+                                  required></textarea>
+                    </div>
+
+                    <br/>
+                    <div class="form-group">
+                        <label class="text-success">文件:</label>
+                        <div class="border border-info rounded" style="padding: 20px;">
+                            <input type="text" class="form-control" name="url" placeholder="外链Url" required></input>
+                            <small>或者选择本地上传</small>
+                            <br/>
+                            <input type="file" name="file" style="display: none;" id="file"/>
+                            <button type="button" class="btn btn-primary btn-sm" id="selectFile">本地上传</button>
+                        </div>
+                        <small id="emailHelp" class="form-text text-muted">选择其中一种方式</small>
+
+                        <button class="btn btn-outline-danger float-right" type="submit">发布</button>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+    <div th:replace="util :: bootalert(msg='')"></div>
+    <script>
+        $("#selectFile").click(function () {
+            $("#file").click();
+        });
+
+        var fileStatus;
+        var boot_alert = $('#my-boot-alert');
+
+        $("#file").change(function () {
+            var fileUrl = $(this).val();
+            $('input[name="url"]').val(fileUrl);
+            fileStatus = fileUrl;
+        });
+
+        $("#resourceForm").submit(function (e) {
+            var urlIn = $('input[name="url"]').val();
+            if (isNotBlank(fileStatus) && urlIn != fileStatus) {
+                $("#file").val('');
+            }
+            $(this).ajaxSubmit(function (data) {
+                if(data.status == 0){
+                    replaceLeftStatusByJs(2);
+                    item_2(1);
+                }else{
+                    $('#my-boot-alert-text').html("ERROR:"+data.msg);
+                    boot_alert.modal('show');
+                }
+            });
+            e.preventDefault();
+        });
+    </script>
+</th:block>

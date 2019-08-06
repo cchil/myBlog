@@ -1,0 +1,70 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="head(index)">
+     <script>
+         var _hmt = _hmt || [];
+         (function() {
+             var hm = document.createElement("script");
+             hm.src = "https://hm.baidu.com/hm.js?ff798bf134daa06b4a02546e0e654531";
+             var s = document.getElementsByTagName("script")[0];
+             s.parentNode.insertBefore(hm, s);
+         })();
+     </script>
+
+
+    <!--公共头部开始-->
+    <header class="am-g am-g-fixed blog-fixed blog-text-center blog-header">
+        <div class="am-u-sm-12 am-u-sm-centered">
+            <img style="max-height: 100px;" th:src="@{${session.settings.mainHeadImage}}" alt="Logo"/>
+            <h2 class="am-hide-sm-only" th:text="${session.settings.mainTitle}">我的个人博客</h2>
+        </div>
+    </header>
+    <hr>
+    <nav class="am-g am-g-fixed blog-fixed blog-nav">
+        <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only blog-button"
+                data-am-collapse="{target: '#blog-collapse'}"><span class="am-sr-only">导航切换</span> <span
+                class="am-icon-bars"></span></button>
+
+        <div class="am-collapse am-topbar-collapse" id="blog-collapse">
+            <ul class="am-nav am-nav-pills am-topbar-nav">
+                <li th:class="${index==1}?'am-active'">
+                    <a th:href="@{/main/index}">首页</a>
+                </li>
+
+                <li th:class="${index==2}?'am-active'">
+                    <a th:href="@{/main/labels}">标签</a>
+                </li>
+                <li th:class="${index==3}?'am-active'">
+                    <a th:href="@{/main/resources}">资源</a>
+                </li>
+                <li th:class="${index==4}?'am-active'">
+                    <a th:href="@{/main/adboutme}">关于本站</a>
+                </li>
+                <!--<li th:class="${index==5}?'am-active'">
+                    <a href="lw-timeline.html">源码下载</a>
+                </li>-->
+            </ul>
+            <form class="am-topbar-form am-topbar-right am-form-inline" role="search" th:action="@{/main/search}"
+                  target="_blank" onsubmit="return submitCheck()">
+                <div class="am-form-group">
+                    <input type="text" name="msg" class="am-form-field am-input-sm" placeholder="文章搜索">
+                </div>
+            </form>
+
+            <script type="text/javascript">
+                function submitCheck() {
+                    var data = $('input[name="msg"]').val();
+                    if (data == null || data == '') {
+                        $('input[name="msg"]').attr('placeholder', '输入不能为空');
+                        return false;
+                    }
+                    return true;
+                }
+            </script>
+        </div>
+    </nav>
+    <hr>
+    <!--公共头部结尾-->
+    <!--背景特效-->
+    <script type="text/javascript" color="0,104,183" opacity='1' zIndex="-1" count="100"
+           th:src="@{/static/js/line.js}"></script>
+
+</div>

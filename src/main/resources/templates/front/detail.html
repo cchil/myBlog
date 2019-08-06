@@ -1,0 +1,326 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title th:text="${data.data.title}">BLOG</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileColor" content="#0e90d2">
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/app.css}">
+    <script th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="https://cdn.bootcss.com/angular.js/1.6.3/angular.min.js"></script>
+</head>
+
+<body id="blog-article-sidebar" ng-app="myApp" ng-controller="commentList">
+
+<!--公共头部开始-->
+<div th:replace="/front/head :: head(index=0)">
+</div>
+<!--公共头部结尾-->
+
+
+<!-- content srart -->
+<div class="am-g am-g-fixed blog-fixed blog-content">
+    <div class="am-u-md-8 am-u-sm-12">
+        <article class="am-article blog-article-p">
+            <div class="am-article-hd">
+                <h1 class="am-article-title blog-text-center" th:text="${data.data.title}">我的文章哎</h1>
+                <p class="am-article-meta blog-text-center">
+                    <span>
+                <a class="blog-color" th:text="'阅读量: '+${data.data.readCount}"></a></span>-
+                    <span><a th:text="'@'+${session.myAccount.name}+'&nbsp;'"></a></span>-
+                    <span><a th:text="${#dates.format(data.data.createTime,'yyyy/MM/dd')}">2015/10/9</a></span>
+                </p>
+            </div>
+            <div class="am-article-bd" th:utext="${data.data.detail}">
+                这里是文章内容
+            </div>
+        </article>
+
+        <!--  <div class="am-g blog-article-widget blog-article-margin">
+              <div class="am-u-lg-4 am-u-md-5 am-u-sm-7 am-u-sm-centered blog-text-center">
+              </div>
+          </div>-->
+        <br><br>
+
+        <!--评论开始-->
+        <div ng-repeat="item in list" id="lopper_comment">
+            <hr>
+            <div class="am-g blog-author blog-article-margin">
+                <div class="am-u-sm-3 am-u-md-3 am-u-lg-2">
+                    <img th:src="@{/static/img/commentHead.jpeg}" alt="" class="blog-author-img am-circle">
+                </div>
+                <div class="am-u-sm-9 am-u-md-9 am-u-lg-10">
+                    <h3><span>作者 &nbsp;: &nbsp;</span><span class="blog-color">{{item.name}}</span></h3>
+                    <p>{{item.detail}}</p>
+                    <p class="am-text-right">{{item.createTime}}</p>
+                </div>
+            </div>
+        </div>
+        <!--评论结束-->
+
+        <hr>
+        <ul class="am-pagination blog-article-margin am-pagination-select">
+            <li class="am-pagination-prev">
+                <a href="" ng-click="update(-1)">&laquo; 一切的回顾</a>
+            </li>
+
+            <li class="am-pagination-select">
+                {{pageIndicator}}
+            </li>
+
+            <li class="am-pagination-next">
+                <a href="" ng-click="update(1)">不远的未来 &raquo;</a>
+            </li>
+        </ul>
+        <hr>
+
+        <form class="am-form am-g" th:action="@{/main/put-comment}" id="doc-vld-msg" method="post">
+            <input type="hidden" name="contentid" th:value="${data.data.id}"/>
+            <h3 class="blog-comment">评论</h3>
+            <hr>
+            <fieldset>
+                <div class="am-form-group am-u-sm-4 blog-clear-left">
+                    <label for="doc-vld-name-2-1">用户名</label>
+                    <input type="text" name="name" id="doc-vld-name-2-1" minlength="3" placeholder="输入用户名（至少 3 个字符）"
+                           required/>
+                </div>
+
+                <div class="am-form-group am-u-sm-5 blog-clear-left">
+                    <label for="doc-vld-email-2-1">邮箱</label>
+                    <input type="email" name="email" id="doc-vld-email-2-1" data-validation-message="输入地球上的电子邮箱撒"
+                           placeholder="输入邮箱" required/>
+                </div>
+                <div class="am-form-group">
+                    <textarea name="detail" id="doc-vld-ta-2-1" minlength="5" maxlength="100"
+                              placeholder="一字千金"></textarea>
+                </div>
+
+                <div class="am-g">
+                    <div class="am-u-sm-4 am-form-group">
+                        <input type="text" placeholder="请输入验证码" name="code" data-validation-message="喂,还有我呢!" required>
+                    </div>
+                    <div class="am-u-sm-5 am-u-end">
+                        <a href="javascript:void(0);" title="点击更换验证码">
+                            <img id="imgVerify" src="" alt="更换验证码" height="36" onclick="getVerify(this);">
+                        </a>
+                    </div>
+                </div>
+
+                <button class="am-btn am-btn-secondary" type="submit">提交</button>
+            </fieldset>
+        </form>
+        <hr>
+    </div>
+
+    <div th:replace="/front/about :: about"/>
+</div>
+<!-- content end -->
+
+<!--底部-->
+<div th:replace="/front/footer :: footer"/>
+
+<div th:replace="/util :: alert(msg='参数错误')"/>
+
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<script th:src="@{/static/js/jquery.form.js}"></script>
+<a th:href="@{/main/getVerify}" id="localUrl" class="am-hide"></a>
+
+<!--Js相关代码-->
+
+<script type="text/javascript">
+    var id = [[${data.data.id}]];
+    var myApp = angular.module('myApp', []);
+    myApp.controller('commentList', function ($scope, $http) {
+        $http({
+            method: 'POST',
+            url: '/main/get-comment',
+            params: {
+                'id': id,
+                'page': 1
+            }
+        }).then(function successCallback(res) {
+            var data = res.data;
+            if (data.status != 0) {
+                //执行失败的结果
+                $('#alert_msg').html(data.msg);
+                $('#my-alert').modal('open');
+            } else {
+                $scope.list = data.data.list;
+                $scope.nextPage = !Boolean(data.data.hasNextPage) ? 1 : data.data.nextPage;
+                $scope.prePage = !Boolean(data.data.hasPreviousPage) ? 1 : data.data.prePage;
+                //总页数
+                var sum = data.data.pages;
+                //当前的页
+                var currentPage = data.data.pageNum;
+                $scope.pageIndicator = currentPage + '/' + sum;
+            }
+        }, function errorCallback(response) {
+            // 请求失败执行代码
+            $('#alert_msg').html('请求出错啦!');
+            $('#my-alert').modal('open');
+        });
+
+        $scope.update = function (type) {
+            $('#lopper_comment').empty();
+            var page = type == -1 ? $scope.prePage : $scope.nextPage;
+            $http({
+                method: 'POST',
+                url: '/main/get-comment',
+                params: {
+                    'id': id,
+                    'page': page
+                }
+            }).then(function successCallback(res) {
+                var data = res.data;
+                if (data.status != 0) {
+                    //执行失败的结果
+                    $('#alert_msg').html(data.msg);
+                    $('#my-alert').modal('open');
+                } else {
+                    $scope.list = data.data.list;
+                    $scope.nextPage = !Boolean(data.data.hasNextPage) ? 1 : data.data.nextPage;
+                    $scope.prePage = !Boolean(data.data.hasPreviousPage) ? 1 : data.data.prePage;
+
+                    //总页数
+                    var sum = data.data.pages;
+                    //当前的页
+                    var currentPage = data.data.pageNum;
+                    $scope.pageIndicator = currentPage + '/' + sum;
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                $('#alert_msg').html('请求出错啦!');
+                $('#my-alert').modal('open');
+            });
+        }
+    });
+    /*-------------------------------------------*/
+    $(function () {
+        $('#doc-vld-msg').validator({
+            onValid: function (validity) {
+                $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+            },
+
+            onInValid: function (validity) {
+                var $field = $(validity.field);
+                var $group = $field.closest('.am-form-group');
+                var $alert = $group.find('.am-alert');
+                // 使用自定义的提示信息 或 插件内置的提示信息
+                var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+
+                if (!$alert.length) {
+                    $alert = $('<div class="am-alert am-alert-danger"></div>').hide().appendTo($group);
+                }
+
+                $alert.html(msg).show();
+            }
+        });
+    });
+
+
+    /**
+     * 检查是有空值
+     */
+    function check() {
+        var name = $('input[name="name"]').val();
+        var email = $('input[name="email"]').val();
+        var detail = $('textarea[name="detail"]').val();
+        var code = $('input[name="code"]').val();
+
+        if (isNotBlank(name) && isNotBlank(email) && isNotBlank(detail) && isNotBlank(code)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 检查字符串不是空的 工具方法
+     */
+    function isNotBlank(str) {
+        if (str == null || str.length == 0) {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * 提交表单
+     */
+    $(function () {
+        $('#doc-vld-msg').submit(function () {
+            if (!check()) {
+                return;
+            }
+            $.ajax({
+                url: document.getElementById('doc-vld-msg').getAttribute("action"),
+                data: $('#doc-vld-msg').serialize(),
+                type: 'post',
+                async: false,
+                error: function () {
+                    $('#alert_msg').html('提交评论失败咯！');
+                    $('#my-alert').modal('open');
+                    getVerify(document.getElementById('imgVerify'));
+                },
+                success: function (a, b, s) {
+                    var data = jQuery.parseJSON(s.responseText);
+                    console.log(data);
+                    if (data.status != 0) {
+                        $('#alert_msg').html(data.msg);
+                        $('#my-alert').modal('open');
+                        getVerify(document.getElementById('imgVerify'));
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+            return false;
+        });
+    })
+
+    //获取验证码
+    function getVerify(obj) {
+        var local = document.getElementById('localUrl').getAttribute("href");
+        obj.src = local + "?" + Math.random();
+    }
+
+    $(window).load(function () {
+        getVerify(document.getElementById('imgVerify'));
+    })
+</script>
+
+<!--返回顶部的代码-->
+<script type="text/javascript" th:src="@{/static/js/jquery.goup.min.js}"></script>
+
+<script>
+    window._bd_share_config = {
+    "common": {
+        "bdSnsKey": {},
+        "bdText": "",
+        "bdMini": "2",
+        "bdMiniList": false,
+        "bdPic": "",
+        "bdStyle": "0",
+        "bdSize": "16"
+    },
+    "slide": {"type": "slide", "bdImg": "7", "bdPos": "right", "bdTop": "100"},
+    "image": {"viewList": ["qzone", "tsina", "tqq", "renren", "weixin"], "viewText": "分享到：", "viewSize": "16"},
+    "selectShare": {"bdContainerClass": null, "bdSelectMiniList": ["qzone", "tsina", "tqq", "renren", "weixin"]}
+};
+
+    var asdasd= $("head")[0].appendChild(document.createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5);
+with (document) 0[asdasd];
+</script>
+</body>
+</html>

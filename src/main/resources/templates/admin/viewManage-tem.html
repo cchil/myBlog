@@ -1,0 +1,1010 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" th:href="@{/static/css/viewManage_css.css}"/>
+
+    <h3 class="text-info">页面管理</h3>
+    <hr/>
+    <div class="row">
+        <div class="col-3 ">
+            <div class="list-group" id="list-group">
+                <button th:if="${data.status==0}" th:each="item,i :${ data.data}" type="button"
+                        th:attr="obj=${item.getSetting().id}"
+                        onclick="replaceSettings(this)"
+                        class="list-group-item list-group-item-action"
+                        th:classappend="${item.setting.status}?'active'"
+                        th:text="${item.setting.id<0}?'默认配置':'配置_ID('+${item.setting.id}+')'">
+                </button>
+                <button type="button" obj="add" onclick="replaceSettings(this)"
+                        class="list-group-item list-group-item-action text-danger">添加新配置&nbsp;&nbsp;&nbsp;<span
+                        class="icon-plus"></span></button>
+            </div>
+        </div>
+        <div class="col-9" align="left">
+            <ul class="list-group">
+                <li class="list-group-item active">
+                    <div align="center">
+                        <h5>状态：<span class="badge badge-danger" id="statusMsg">激活</span></h5>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div align="center">
+                        <button type="button" class="btn btn-outline-dark btn-sm " id="deleteConfig">删除配置</button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-outline-info btn-sm " id="setActiveConfig">设置激活</button>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="input-group input-group-sm col-5">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">主页标题</span>
+                        </div>
+                        <input type="text" id="mainTitle" class="form-control"/>
+
+                        <button type="button" class="btn btn-dribbble btn-sm ml-3" id="mainTitleSubmit">修改
+                        </button>
+
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <img src="" class="img-thumbnail" id="logoImgShow" style="max-height: 100px;"/>
+                        </div>
+
+                        <div class="col-6" align="center">
+                            <span>主页Logo</span>
+                            <br/><br/>
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" id="mainHeadIn" placeholder="图片URL:http://"/>
+                            </div>
+                            <input style="display: none;" type="file" id="mainHeadUploadInput"/>
+                            <br/>
+                            <div>
+                                <button class="btn btn-raised  btn-sm" id="mainHeadUploadBtn">上传</button>
+                                <button class="btn btn-youtube btn-sm" id="mainLogoSubmit">修改</button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="d-inline-flex">
+
+                        <!--<div class="custom-control custom-checkbox align-baseline">
+                            <input type="checkbox" class="custom-control-input" checked="true"
+                                   id="checkBoxShowFooter">
+                            <label class="custom-control-label" for="checkBoxShowFooter"
+                                   id="ShowFooterTip">显示</label>
+                        </div>-->
+                        <div class="togglebutton mt-1">
+                            <label class="h-100">
+                                <input type="checkbox" checked="true" id="checkBoxShowFooter">
+                                <span class="toggle"></span>
+                                是否显示底部Footer
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn btn-facebook btn-sm" id="showFooterSubmit">修改
+                        </button>
+
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <h6>Contact ME-跳转链接</h6>
+
+                    <div class="row">
+                        <div class="input-group input-group-sm col-5">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text">QQ</label>
+                            </div>
+                            <input class="form-control" type="text" id="SettingQQIn"/>
+                            <button class="btn btn-dribbble btn-sm ml-2" type="button" id="settingQQSubmit">确定
+                            </button>
+                        </div>
+                        <div class="col-1"></div>
+                        <div class="input-group input-group-sm col-5">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text">微信</label>
+                            </div>
+                            <input class="form-control" type="text" id="SettingWeixinIn"/>
+                            <button class="btn btn-dribbble btn-sm ml-2" type="button" id="settingWeixinSubmit">
+                                确定
+                            </button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="input-group input-group-sm col-5">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text">微博</label>
+                            </div>
+                            <input class="form-control" type="text" id="SettingWeiboIn"/>
+                            <button class="btn btn-dribbble btn-sm ml-2" type="button" id="settingWeiboSubmit">确定
+                            </button>
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="input-group input-group-sm col-5">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text">GitHub</label>
+                            </div>
+                            <input class="form-control" type="text" id="SettingGitHubIn"/>
+                            <button class="btn btn-dribbble btn-sm ml-2" type="button" id="settingGitHubSubmit">
+                                确定
+                            </button>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <h6>标签云(TAG Cloud)</h6>
+                    <div id="box-tagCloud">
+
+                    </div>
+                    <br/>
+                    <div class="container" align="center">
+                        <button type="button" id="addBoxCloudBtn" class="btn btn-info btn-sm w-25">增加一列
+                        </button>
+
+                        <button type="button" id="saveBoxCloud" class="btn btn-success btn-sm w-25">保存</button>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <h6>首页轮播图</h6>
+                    <div id="box-mainCarousel">
+
+                    </div>
+                    <div class="container" align="center">
+                        <button type="button" id="addBoxCarouselBtn" class="btn btn-info btn-sm w-25">
+                            增加一列
+                        </button>
+                        <button type="button" id="saveBoxCarouselBtn" class="btn btn-success btn-sm w-25">保存
+                        </button>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <h6>右侧关于我最底部栏目</h6>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>卡片标题：</label>
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control form-control-sm" id="otherCard"/>
+                        </div>
+                        <button type="submit" id="otherSubmit" class="btn btn-success btn-sm">更新</button>
+                    </div>
+                    <br/>
+                    <div id="box-mainOtherCard">
+
+                    </div>
+                    <br/>
+                    <div class="container" align="center">
+                        <button type="button" id="addBoxOtherBtn" class="btn btn-info btn-sm w-25">增加一列
+                        </button>
+                        <button type="button" id="saveBoxOtherBtn" class="btn btn-success btn-sm w-25">保存
+                        </button>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <h6>首页内容展示的随机图片集</h6>
+                    <div class="w-100">
+                        <small>为了展示在首页中图片出现重复的次数减少建议图片集中的图片尽可能增加</small>
+                    </div>
+                    <input type="file" multiple id="ssi-upload" name="files"/>
+
+                    <hr/>
+                    <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse"
+                            data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        展开查看我的图集
+                    </button>
+
+                    <div class="collapse" id="collapseExample">
+                        <br/>
+                        <div class="card card-body">
+
+                            <div class="container">
+                                <div>
+                                    <button id="contentDeleteAll" type="button" class="btn btn-outline-dark  btn-sm">
+                                        全部删除
+                                    </button>
+                                </div>
+                            </div>
+                            <br>
+                            <!--放入Img-->
+                            <div class="container">
+                                <div class="row d-flex" id="box-contentItem">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <h6>关于本站的内容</h6>
+                    <div class="form-inline container">
+                        <div class="form-group">
+                            <label>标题：</label>
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control form-control-sm" id="aboutTitle"/>
+                        </div>
+                        <button type="submit" id="aboutSubmit" class="btn btn-success btn-sm">更新</button>
+                    </div>
+
+                    <div>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+
+                            <div id="menu1" class="container tab-pane active"><br>
+
+                                <div class="h-100 w-100">
+                                    <div id="markdown" class="markdown">
+                                        <textarea id="markDetail"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="container" align="center">
+                            <button class="btn btn-success w-50 btn-sm" type="button" id="aboutDetailSave">保存
+                            </button>
+                        </div>
+                    </div>
+                    <!--获取服务器的中 md/lib文件路径的前缀-->
+                    <a th:href="@{/static/md/lib}" class="hide" id="urlPrefix"></a>
+                    <!--获取服务器地址-->
+                    <a th:href="@{/admin}" class="hide" id="serverUrl"></a>
+
+                </li>
+            </ul>
+        </div>
+    </div>
+    <br/><br/>
+
+    <link rel="stylesheet" th:href="@{/static/css/ssi-uploader.css}"/>
+    <link rel="stylesheet" th:href="@{/static/md/editormd.min.css}"/>
+    <script type="text/javascript" th:src="@{/static/md/editormd.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/ssi-uploader.min.js}"></script>
+
+    <!--Markdown Js-->
+    <script type="text/javascript">
+        //服务器地址路径
+        var serverUrl = document.getElementById("serverUrl").getAttribute("href");
+        var md;
+        $(function () {
+            md = editormd("markdown", { //注意1：这里的就是上面的DIV的id属性值
+                width: "100%",
+                height: 500,
+                //syncScrolling: "single",
+                path: document.getElementById("urlPrefix").getAttribute("href") + "/", //注意2：你的路径
+                saveHTMLToTextarea: true, //注意3：这个配置，方便post提交表单
+                emoji: true, //emoji表情，默认关闭
+                taskList: true,
+                tocm: true, // Using [TOCM]
+                tex: true, // 开启科学公式TeX语言支持，默认关闭
+                /**上传图片相关配置如下*/
+                imageUpload: true,
+                imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL: serverUrl + "/mark-upload",
+                onload: function () {
+                    //这段代码 可以让页面的滚动条处于顶部
+                    //window.scrollTo(0, 0);
+                }
+            });
+        });
+
+    </script>
+
+
+    <!--组件特效-->
+    <script type="text/javascript">
+        $("#mainHeadUploadBtn").click(function () {
+            $("#mainHeadUploadInput").click();
+        });
+
+        $("#mainHeadUploadInput").change(function () {
+            //文件上传
+            upload(this.files[0], "mainLogo")
+                .done(function (data) {
+                    if (data.status == 0) {
+                        swal("上传成功", "Success", "success");
+                        $("#mainHeadIn").val(data.data.absoluteUrl);
+                        $("#logoImgShow").attr("src", data.data.absoluteUrl);
+                    } else {
+                        swal("上传失败", data.msg, "error");
+                    }
+                })
+                .fail(function () {
+                    swal("上传失败", "ERROR：远程服务器没有响应!", "error");
+                });
+        });
+
+        /**
+         * 添加一列标签云的模板
+         */
+        $("#addBoxCloudBtn").click(function () {
+            var html = $("#tagCloud-Tem").html();
+            $("#box-tagCloud").append(html);
+            $("#box-tagCloud").find("div[name='tagCloud-item']").last().hide();
+            $("#box-tagCloud").find("div[name='tagCloud-item']").last().fadeIn("fast");
+        });
+
+        /**
+         * 移除一个模板
+         * @param {Object} btn
+         */
+        function removeBoxCloud(btn) {
+            $(btn).parent().parent().fadeOut("fast", function () {
+                $(btn).parent().parent().remove();
+            });
+        }
+
+
+        /**
+         * 添加一列首页轮播图的模板
+         */
+        $("#addBoxCarouselBtn").click(function () {
+            var html = $("#carousel-Tem").html();
+            $("#box-mainCarousel").append(html);
+            $("#box-mainCarousel").find("div[name='carousel-item']").last().hide();
+            $("#box-mainCarousel").find("div[name='carousel-item']").last().fadeIn("fast");
+        });
+
+        /**
+         * 首页轮播图item列表中上传按钮的点击事件
+         * @param {Object} btn
+         */
+        function uploadImgForCarousel(btn) {
+            var root = $(btn).parent();
+            root.children('input[name="carouselFileUpload"]').click();
+            root.children('input[name="carouselFileUpload"]').change(function (e) {
+                //文件上传
+                upload(this.files[0], "mainCarousel")
+                    .done(function (data) {
+                        if (data.status == 0) {
+                            swal("上传成功", "Success", "success");
+                            root.children('input[name="carouselInputImg"]').val(data.data.absoluteUrl);
+                        } else {
+                            swal("上传失败", data.msg, "error");
+                        }
+                    })
+                    .fail(function () {
+                        swal("上传失败", "ERROR：远程服务器没有响应!", "error");
+                    });
+            });
+        }
+
+        /**
+         * 关于我底部Other卡片的添加模板响应方法
+         */
+        $("#addBoxOtherBtn").click(function () {
+            var html = $("#tagCloud-Tem").html();
+            $("#box-mainOtherCard").append(html);
+            $("#box-mainOtherCard").find("div[name='tagCloud-item']").last().hide();
+            $("#box-mainOtherCard").find("div[name='tagCloud-item']").last().fadeIn("fast");
+        });
+
+        /**
+         * 文件上传
+         */
+        $('#ssi-upload').ssi_uploader({
+            url: serverUrl + '/file-upload',
+            data: {prefix: "mainItem"},
+            locale: "cn",
+            ajaxOptions: {
+                success: function (data) {
+                    if (data.status == 0) {
+                        jsonObj.viewContentItem.href.push(data.data.absoluteUrl);
+                        jsonObj.viewContentItem.size = jsonObj.viewContentItem.href.length;
+                    }
+                }
+            },
+            onUpload: function () {
+                saveJsonToServer(true);
+            }
+        });
+    </script>
+
+    <!--提交表单js-->
+    <script type="text/javascript">
+        /**
+         * 点击修改主页标题
+         */
+        $("#mainTitleSubmit").click(function () {
+            var data = $("#mainTitle").val();
+            if (!isNotBlank(data)) {
+                swal("主页标题输入不能为空");
+            } else {
+                jsonObj.mainTitle = data;
+                saveJsonToServer();
+            }
+        });
+
+        /**
+         * 点击修改主页的Logo
+         */
+        $("#mainLogoSubmit").click(function () {
+            var data = $("#mainHeadIn").val();
+            if (!isNotBlank(data)) {
+                swal("主图Url地址不能为空");
+            } else {
+                jsonObj.mainHeadImage = data;
+                saveJsonToServer();
+            }
+        });
+
+        /**
+         * 点击修改是否显示footer的
+         */
+        $("#showFooterSubmit").click(function () {
+            var status = $("#checkBoxShowFooter").prop("checked");
+            jsonObj.showFooter = status;
+            saveJsonToServer();
+        });
+
+        /**
+         * 修改qq的事件
+         */
+        $("#settingQQSubmit").click(function () {
+            var data = $("#SettingQQIn").val();
+            if (!isNotBlank(data)) {
+                swal("输入QQ的联系内容不能为空");
+            } else {
+                jsonObj.viewContactMe.qq = data;
+                saveJsonToServer();
+            }
+        });
+
+        /**
+         * 修改微信的事件
+         */
+        $("#settingWeixinSubmit").click(function () {
+            var data = $("#SettingWeixinIn").val();
+            if (!isNotBlank(data)) {
+                swal("输入微信的联系内容不能为空");
+            } else {
+                jsonObj.viewContactMe.weixin = data;
+                saveJsonToServer();
+            }
+
+        });
+
+
+        /**
+         * 修改微博的事件
+         */
+        $("#settingWeiboSubmit").click(function () {
+            var data = $("#SettingWeiboIn").val();
+            if (!isNotBlank(data)) {
+                swal("输入微博的联系内容不能为空");
+                return;
+            }
+            jsonObj.viewContactMe.weibo = data;
+            saveJsonToServer();
+        });
+
+        /**
+         * 修改GitHub的事件
+         */
+        $("#settingGitHubSubmit").click(function () {
+            var data = $("#SettingGitHubIn").val();
+            if (!isNotBlank(data)) {
+                swal("输入GitHub的联系内容不能为空");
+                return;
+            }
+            jsonObj.viewContactMe.github = data;
+            saveJsonToServer();
+        });
+
+        /**
+         *  保存标签云的按钮
+         */
+        $("#saveBoxCloud").click(function () {
+            var tems = $("#box-tagCloud").find("div[name='tagCloud-item']");
+            for (var i = 0; i < tems.length; i++) {
+                var title = $(tems[i]).find("input[name='tagCloud-Tem-title']").val();
+                var href = $(tems[i]).find("input[name='tagCloud-Tem-href']").val();
+                if (!isNotBlank(title) || !isNotBlank(href)) {
+                    swal("输入不完整，请检查您的输入");
+                    return;
+                }
+            }
+            var tags = jsonObj.viewTagCloud.tagItems;
+            tags.length = 0;
+            $("#box-tagCloud").find("div[name='tagCloud-item']").each(function (index, item) {
+                var title = $(item).find("input[name='tagCloud-Tem-title']").val();
+                var href = $(item).find("input[name='tagCloud-Tem-href']").val();
+                tags.push({title: title, href: href});
+            });
+            saveJsonToServer();
+        });
+
+        /**
+         * 首页轮播图的保存点击事件
+         */
+        $("#saveBoxCarouselBtn").click(function () {
+            var tems = $("#box-mainCarousel").find("div[name='carousel-item']");
+            for (var i = 0; i < tems.length; i++) {
+                var title = $(tems[i]).find("input[name='carouselInputTitle']").val();
+                var href = $(tems[i]).find("input[name='carouselInputImg']").val();
+                var detail = $(tems[i]).find("textarea[name='carouselInputContent']").val();
+                if (!isNotBlank(title) || !isNotBlank(href) || !isNotBlank(detail)) {
+                    swal("输入不完整，请检查您的输入");
+                    return;
+                }
+            }
+
+            var list = jsonObj.viewCarousel.viewCarousels;
+            list.length = 0;
+            $(tems).each(function (index, item) {
+                var title = $(item).find("input[name='carouselInputTitle']").val();
+                var href = $(item).find("input[name='carouselInputImg']").val();
+                var detail = $(item).find("textarea[name='carouselInputContent']").val();
+                list.push({href: href, title: title, detail: detail});
+            });
+            saveJsonToServer();
+        });
+
+        /**
+         * 修改Other卡片标题的提交
+         */
+        $("#otherSubmit").click(function () {
+            var data = $("#otherCard").val();
+            if (!isNotBlank(data)) {
+                swal("卡片标题请输入完整");
+            } else {
+                jsonObj.viewOther.title = data;
+                saveJsonToServer();
+            }
+        });
+
+        /**
+         * 修改Other卡片中的内容提交
+         */
+        $("#saveBoxOtherBtn").click(function () {
+            var tems = $("#box-mainOtherCard").find("div[name='tagCloud-item']");
+            for (var i = 0; i < tems.length; i++) {
+                var title = $(tems[i]).find("input[name='tagCloud-Tem-title']").val();
+                var href = $(tems[i]).find("input[name='tagCloud-Tem-href']").val();
+                if (!isNotBlank(title) || !isNotBlank(href)) {
+                    swal("输入不完整，请检查您的输入");
+                    return;
+                }
+            }
+
+            var list = jsonObj.viewOther.items;
+            list.length = 0;
+            $(tems).each(function (index, item) {
+                var title = $(item).find("input[name='tagCloud-Tem-title']").val();
+                var href = $(item).find("input[name='tagCloud-Tem-href']").val();
+                list.push({text: title, href: href});
+            });
+            saveJsonToServer();
+        });
+
+        /**
+         * 修改关于本站标题的提交
+         */
+        $("#aboutSubmit").click(function () {
+            var data = $("#aboutTitle").val();
+            if (!isNotBlank(data)) {
+                swal("关于本站标题请输入完整");
+            } else {
+                jsonObj.viewAboutStation.title = data;
+                saveJsonToServer();
+            }
+        });
+
+        /**
+         * 保存关于本站的内容
+         */
+        $("#aboutDetailSave").click(function () {
+            var data = $("#markDetail").val();
+            if (!isNotBlank(data)) {
+                swal("关于本站的内容不能为空");
+            } else {
+                var urlPrefix = document.getElementById("urlPrefix").getAttribute("href");
+
+                var html = '<div id="doc-content"><textarea style="display:none;">' + data + '</textarea></div>';
+                html += '<script>var testEditor;$(function() {testEditor = editormd.markdownToHTML("doc-content", {htmlDecode: "style,script,iframe",emoji: true,taskList: true,tex: true,flowChart: true, sequenceDiagram: true,codeFold: true,});});';
+                html += '<\/script>';
+                //添加scpript js
+                html += '<script src="' + urlPrefix + '/marked.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/prettify.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/raphael.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/underscore.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/sequence-diagram.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/flowchart.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/jquery.flowchart.min.js"><\/script>';
+                html += '<script src="' + urlPrefix + '/editormd.min.js"><\/script>';
+
+                jsonObj.viewAboutStation.detail = html;
+                saveJsonToServer();
+            }
+        });
+
+        /**
+         * 删除这个配置的按钮
+         */
+        $("#deleteConfig").click(function () {
+            if (jsonObj.setting.id < 0) {
+                swal("警告", "默认的配置是不能删除的!", "warning");
+            } else {
+                swal({
+                    title: "确认么?",
+                    text: "删除后就不可恢复这个配置信息了!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then(function (where) {
+                    if (where) {
+                        var id = jsonObj.setting.id;
+                        $.ajax({
+                            type: "post",
+                            url: serverUrl + "/delete-config",
+                            data: {id: id},
+                            success: function (data) {
+                                if (data.status == 0) {
+                                    //如果删除成功就更新页面
+                                    item_8();
+                                } else {
+                                    swal("错误", "ERROR:" + data.msg, "error");
+                                }
+                            },
+                            error: function () {
+                                swal("错误", "ERROR:远程服务器没有响应", "error");
+                            }
+                        });
+                    }
+                });
+            }
+
+        });
+
+        /**
+         * 设置为激活这个配置按钮的按钮
+         */
+        $("#setActiveConfig").click(function () {
+            if (jsonObj.setting.status) {
+                swal("当前已经处于激活状态");
+            } else {
+                var id = jsonObj.setting.id;
+                $.ajax({
+                    type: "post",
+                    url: serverUrl + "/set-active",
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.status == 0) {
+                            //如果设置成功就更新页面
+                            item_8();
+                        } else {
+                            swal("错误", "ERROR:" + data.msg, "error");
+                        }
+                    },
+                    error: function () {
+                        swal("错误", "ERROR:远程服务器没有响应", "error");
+                    }
+                });
+            }
+
+        });
+
+        /**
+         * 首页内容图集的删除按钮点击事件
+         */
+        function contentItemDelete(btn) {
+            if (jsonObj.setting.id < 0) {
+                swal("错误", "ERROR:默认的配置是无法更新的,请新建新的配置做修改!", "error");
+                return;
+            }
+            var index = btn.getAttribute("index");
+            var list = jsonObj.viewContentItem.href;
+            //删除的操作
+            var parent = $(btn).parents(".col-3")[0];
+            $(parent).fadeOut("fast", function () {
+                $(parent).remove();
+                list.splice(index, 1);
+                jsonObj.viewContentItem.size = list.length;
+                saveJsonToServer();
+            });
+        }
+
+        /**
+         * 删除全部的首页内容图集
+         */
+        $("#contentDeleteAll").click(function () {
+            if (jsonObj.setting.id < 0) {
+                swal("错误", "ERROR:默认的配置是无法更新的,请新建新的配置做修改!", "error");
+                return;
+            }
+            swal({
+                title: "请确认",
+                text: "删除后就不可恢复了!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            }).then(function (where) {
+                if (where) {
+                    var list = jsonObj.viewContentItem.href;
+                    //清空元素
+                    list.length = 0;
+                    $("#box-contentItem").empty();
+                    jsonObj.viewContentItem.size = list.length;
+                    saveJsonToServer();
+                }
+            });
+
+        });
+
+
+        /**
+         * 文件上传的方法
+         * @param {Object} dom
+         * @param {Object} prefix
+         */
+        function upload(dom, prefix) {
+            if (jsonObj.setting.id < 0) {
+                swal("错误", "ERROR:默认的配置是无法更新的,请新建新的配置做修改!", "error");
+                return;
+            }
+
+            swal("提示", "文件正在上传请稍后");
+            var formData = new FormData();
+            formData.append('files', dom);
+            formData.append("prefix", prefix);
+            return $.ajax({
+                type: "post",
+                url: serverUrl + "/file-upload",
+                data: formData,
+                async: true,
+                contentType: false,
+                processData: false
+            });
+        }
+
+        /**
+         * 保存所做的更改到服务器
+         */
+        function saveJsonToServer(isRefresh) {
+            if (jsonObj.setting.id < 0) {
+                swal("错误", "ERROR:默认的配置是无法更新的,请新建新的配置做修改!", "error");
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: serverUrl + "/save-config",
+                data: JSON.stringify(jsonObj),
+                contentType: "application/json",
+                async: true,
+                success: function (data) {
+                    if (data.status == 0) {
+                        swal("成功", "更新完成", "success");
+                        if (isRefresh != null && isRefresh == true) {
+                            requestServer(currentConfigId);
+                        }
+                    } else {
+                        swal("失败", "ERROR:" + data.msg, "error");
+                    }
+                },
+                error: function () {
+                    swal("ERROR:保存失败远程服务器没有响应");
+                }
+            });
+        }
+
+        var currentConfigId;
+
+        /**
+         * 切换
+         * @param {Object} btn
+         */
+        function replaceSettings(btn) {
+            var data = $(btn).attr("obj");
+            if (data == "add") {
+                //添加一个新的模板
+                $.ajax({
+                    type: "post",
+                    data: {_method: "put"},
+                    url: serverUrl + "/add-config",
+                    success: function (data) {
+                        if (data.status == 0) {
+                            item_8();
+                        } else {
+                            swal("失败", "ERROR:" + data.msg, "error");
+                        }
+                    },
+                    error: function () {
+                        swal("失败", "远程服务器没有响应", "error");
+                    }
+                });
+            } else {
+                requestServer(data);
+            }
+        }
+
+        function requestServer(id) {
+            currentConfigId = id;
+            $.ajax({
+                type: "get",
+                url: serverUrl + "/get-config?id=" + id,
+                async: true,
+                dataType: "json",
+                success: function (data) {
+                    if (data.status == 0) {
+                        jsonObj = jQuery.parseJSON(JSON.stringify(data.data));
+                        initDataView();
+                    } else {
+                        swal("ERROR:" + data.msg);
+                    }
+                },
+                error: function () {
+                    swal("ERROR:远程服务器没有响应");
+                }
+            });
+        }
+
+        /**
+         * 初始化数据信息 并添加代码
+         */
+        function initDataView() {
+            $("#box-tagCloud").empty();
+            $("#box-mainCarousel").empty();
+            $("#box-mainOtherCard").empty();
+            $("#box-contentItem").empty();
+
+            var settingObj = jsonObj.setting;
+            var contactMe = jsonObj.viewContactMe;
+            var tagCloud = jsonObj.viewTagCloud.tagItems;
+            var mainCarousel = jsonObj.viewCarousel.viewCarousels;
+            var otherCard = jsonObj.viewOther;
+            var about = jsonObj.viewAboutStation;
+            var contentItem = jsonObj.viewContentItem.href;
+
+            $("#statusMsg").html(settingObj.status == true ? "激活" : "失效");
+            $("#mainTitle").val(jsonObj.mainTitle);
+            $("#logoImgShow").attr("src", jsonObj.mainHeadImage);
+            $("#mainHeadIn").val(jsonObj.mainHeadImage);
+            $("#checkBoxShowFooter")[0].checked = jsonObj.showFooter;
+            $("#ShowFooterTip").html(jsonObj.showFooter ? "显示" : "隐藏");
+
+            $("#SettingQQIn").val(contactMe.qq);
+            $("#SettingWeixinIn").val(contactMe.weixin);
+            $("#SettingWeiboIn").val(contactMe.weibo);
+            $("#SettingGitHubIn").val(contactMe.github);
+
+            //设置标签云的循环赋值
+            for (var i = 0; i < tagCloud.length; i++) {
+                $("#addBoxCloudBtn").click();
+                var lastDiv = $("#box-tagCloud").find("div[name='tagCloud-item']").last();
+                $(lastDiv).find("input[name='tagCloud-Tem-title']").val(tagCloud[i].title);
+                $(lastDiv).find("input[name='tagCloud-Tem-href']").val(tagCloud[i].href);
+            }
+
+            for (var i = 0; i < mainCarousel.length; i++) {
+                $("#addBoxCarouselBtn").click();
+                var lastDiv = $("#box-mainCarousel").find("div[name='carousel-item']").last();
+                $(lastDiv).find("input[name='carouselInputTitle']").val(mainCarousel[i].title);
+                $(lastDiv).find("input[name='carouselInputImg']").val(mainCarousel[i].href);
+                $(lastDiv).find("textarea[name='carouselInputContent']").val(mainCarousel[i].detail);
+            }
+
+            $("#otherCard").val(otherCard.title);
+            var otherCardItems = otherCard.items;
+            for (var i = 0; i < otherCardItems.length; i++) {
+                $("#addBoxOtherBtn").click();
+                var lastDiv = $("#box-mainOtherCard").find("div[name='tagCloud-item']").last();
+                $(lastDiv).find("input[name='tagCloud-Tem-title']").val(otherCardItems[i].text);
+                $(lastDiv).find("input[name='tagCloud-Tem-href']").val(otherCardItems[i].href);
+            }
+
+            $("#aboutTitle").val(about.title);
+            $("#markDetail").val(about.detail);
+
+            for (var i = 0; i < contentItem.length; i++) {
+                var html = $("#contentImg-tem").html();
+                $("#box-contentItem").append(html);
+                var lastDiv = $("#box-contentItem").find("div[name='contentImg-item']").last();
+                $(lastDiv).find("img").attr("src", contentItem[i]);
+                $(lastDiv).find("button").attr("index", i);
+            }
+        }
+
+        var jsonObj;
+
+        $(function () {
+            replaceSettings($("button[class='list-group-item list-group-item-action active']"));
+        });
+    </script>
+
+    <!--TagCloud模板-->
+    <script type="text/html" id="tagCloud-Tem">
+        <div class="container row mb-2" name="tagCloud-item">
+            <div class="input-group input-group-sm col-5">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">标题</label>
+                </div>
+                <input class="form-control" type="text" name="tagCloud-Tem-title"/>
+            </div>
+
+            <div class="input-group input-group-sm col-5">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">跳转链接</label>
+                </div>
+                <input class="form-control" type="text" name="tagCloud-Tem-href"/>
+            </div>
+
+            <div class="col-1">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeBoxCloud(this)">删除一列</button>
+            </div>
+            <br/>
+        </div>
+    </script>
+
+    <!--首页轮播图配置的模板-->
+    <script type="text/html" id="carousel-Tem">
+        <div class="row container mb-2" name="carousel-item">
+            <div class="col-10">
+                <div class="row">
+                    <div class="input-group input-group-sm col-5">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input type="text" class="form-control" name="carouselInputTitle"/>
+                    </div>
+
+                    <div class="input-group input-group-sm col-6">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">图片Url</span>
+                        </div>
+                        <input type="text" class="form-control" name="carouselInputImg" placeholder="可输入外链,或者本地上传图片"/>
+                        <input type="file" style="display: none;" name="carouselFileUpload"/>
+                        <button type="button" class="btn btn-behance btn-sm ml-4"
+                                onclick="uploadImgForCarousel(this)">上传
+                        </button>
+                    </div>
+                    <div class="col-12" style="height: 10px;"></div>
+                    <div class="input-group input-group-sm col-12">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">正文</span>
+                        </div>
+                        <textarea name="carouselInputContent" class="form-control" maxlength="300"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-1" align="center">
+                <button class="btn btn-danger btn-sm" type="button" onclick="removeBoxCloud(this)">删除</button>
+            </div>
+
+            <div class="col-12">
+                <hr/>
+            </div>
+        </div>
+    </script>
+
+    <!--管理所有图集的模板-->
+    <script type="text/html" id="contentImg-tem">
+        <div name="contentImg-item" class="col-3 m-0">
+            <table>
+                <tbody>
+                <tr>
+                    <img src="" class="img-thumbnail"/>
+                </tr>
+                <tr>
+                    <div style="height: 5px;"></div>
+                </tr>
+                <tr>
+                    <div class="w-50 mx-auto" align="center">
+                        <button onclick="contentItemDelete(this)" class="btn btn-outline-info btn-sm mx-auto"><i
+                                class="icon-trash icon-large mx-auto"></i></button>
+                    </div>
+                </tr>
+                <tr>
+                    <hr/>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </script>
+</th:block>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchilei.blog.dao.SettingMapper">
+
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+    <resultMap id="BaseResultMap" type="com.cchilei.blog.pojo.Setting">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="config" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="status" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, config, status
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from setting
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from setting
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.cchilei.blog.pojo.Setting" >
+    insert into setting (id, config, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{config,jdbcType=VARCHAR}, #{status,jdbcType=BIT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.cchilei.blog.pojo.Setting" >
+        insert into setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="config != null">
+                config,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="config != null">
+                #{config,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cchilei.blog.pojo.Setting" >
+        update setting
+        <set>
+            <if test="config != null">
+                config = #{config,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cchilei.blog.pojo.Setting" >
+    update setting
+    set config = #{config,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectForAll" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from setting
+    </select>
+
+    <select id="selectSettingByActive" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from setting
+        where status = 1
+    </select>
+
+    <update id="cancelActiveAll" >
+        update setting set status = 0
+    </update>
+    
+    <update id="setSettingToActive" parameterType="integer" >
+        update setting set status = 1 where id = #{id}
+    </update>
+</mapper>

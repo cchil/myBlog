@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="resources">
+    <!--主体部分-->
+    <h2><span class="glyphicon glyphicon-folder-open"></span>资源管理</h2>
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>标题</th>
+            <th>描述</th>
+            <th>下载地址</th>
+            <th>时间</th>
+            <th>设置</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each=" item,i : ${data.data.list}">
+            <td th:text="${i.index+1}">3</td>
+            <td><p name="controller_text" th:text="${item.title}"></p><label class="am-hide" style="display: none;"
+                                                                             th:text="${item.title}"></label></td>
+            <td><p name="controller_text" th:text="${item.detail}"></p><label class="am-hide" style="display: none;"
+                                                                              th:text="${item.detail}"></label></td>
+            <td><p name="controller_text" th:text="${item.url}"></p><label class="am-hide" style="display: none;"
+                                                                           th:text="${item.url}"></label></td>
+            <td th:text="${#dates.format(item.createTime,'yyyy/MM/dd')}">2018-1-1</td>
+            <td>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        操作
+                    </button>
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item" th:onclick="${'updateClick('+item.id+','+i.index+')'}">更新</button>
+                        <button class="dropdown-item" th:onclick="${'deleteClick('+item.id+','+i.index+')'}">删除</button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!--页码部分-->
+    <br/>
+    <hr/>
+    <div class="container">
+        <div class="row" align="center">
+            <ul class="pagination mx-auto">
+                <li class="page-item" th:classappend="${!data.data.hasPreviousPage?'disabled':''}">
+                    <a class="page-link" href="" th:onclick="'item_2('+${data.data.prePage}+')'">&laquo;</a>
+                </li>
+                <th:block th:each="item : ${data.data.navigatepageNums}">
+                    <li th:class="${item==data.data.pageNum?'page-item active':'page-item'}">
+                        <a class="page-link" href="" th:onclick="'item_2('+${item}+')'" th:text="${item}"></a>
+                    </li>
+                </th:block>
+                <li class="page-item" th:classappend="${!data.data.hasNextPage?'disabled':''}">
+                    <a class="page-link" href="" th:onclick="'item_2('+${data.data.nextPage}+')'">&raquo;</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title">资源更新</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <form method="post" id="updateSubmit" action="/main/put-comment">
+                    <!-- 模态框主体 -->
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">标题</label>
+                            <input type="text" class="form-control" id="title" placeholder="输入标题" name="title">
+                        </div>
+                        <div class="form-group">
+                            <label for="url">Url地址</label>
+                            <input type="text" class="form-control" id="url" placeholder="输入URL地址" name="url">
+                            <input type="hidden" value="0" name="id">
+                            <input type="hidden" value="put" name="_method">
+                        </div>
+                        <div class="form-group">
+                            <label for="detail">描述</label>
+                            <textarea class="form-control" id="detail" rows="3" maxlength="100" name="detail"
+                                      placeholder="输入描述"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 模态框底部 -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-success">保存</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!--JavaScript部分-->
+    <script type="text/javascript">
+
+        /**
+         * 点击之后获取表单中的属性值 赋值给modal窗口初始化值
+         * 并显示出这个modal
+         * @param id 资源的id
+         * @param index 所在tr标签的索引
+         */
+        function updateClick(id, index) {
+            var modal = $('#myModal');
+            var tr = $('tbody').find("tr")[index];
+            var tds = tr.getElementsByTagName("td");
+            modal.find('input')[0].value = $(tds[1]).find("label").html();
+            modal.find('input')[1].value = $(tds[3]).find("label").html();
+            modal.find('input')[2].value = id;
+            modal.find('textarea')[0].value = $(tds[2]).find("label").html();
+            modal.modal('show');
+        }
+
+        /**
+         * 提交表单操作
+         */
+        $(function () {
+            $('#updateSubmit').submit(function (e) {
+                var data = $('#updateSubmit').serialize();
+                console.log(data);
+                var d = $(".modal-footer").find("button")[1];
+                d.setAttribute("disabled", "disabled");
+                d.textContent = "正在保存中...";
+                //这里开始提交的操作
+                $.ajax({
+                    url: localUrl + "/update-resource",
+                    type: "post",
+                    data: data,
+                    async: true,
+                    success: function (d) {
+                        if (d.status != 0) {
+                            alert("ERROR:" + d.msg);
+                        } else {
+                            $("#myModal").modal("hide");
+                            $('.modal-backdrop').remove();
+                            item_2();
+                        }
+                    },
+                    error: function () {
+                        $("#myModal").modal("hide");
+                        $('.modal-backdrop').remove();
+                        item_2();
+                    }
+                });
+                //截断提交表单
+                e.preventDefault();
+            });
+        })
+
+        $(function () {
+            $('p[name="controller_text"]').each(function (index, item) {
+                var html = $(item).html();
+                var max = html.length < 10 ? html.length : 10;
+                $(item).html(html.substring(0,max)+"...");
+            });
+        });
+
+        /**
+         * 删除的操作
+         * @param id
+         * @param index
+         */
+        function deleteClick(id, index) {
+            $.ajax({
+                url: localUrl + "/delete-resource",
+                type: "post",
+                data: {id: id, _method: "delete"},
+                async: false,
+                success: function (d) {
+                    if (d.status == 0) {
+                        item_2(1);
+                    } else {
+                        alert("ERROR:" + d.msg);
+                    }
+                },
+                error: function () {
+                    alert("删除失败");
+                }
+            });
+            //$('tbody').find("tr")[index].remove();
+        }
+    </script>
+</div>

@@ -1,0 +1,132 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <div class="card card-nav-tabs">
+        <div class="card-header card-header-info">
+            <h4>评论管理</h4>
+        </div>
+        <div class="card-body">
+            <label class="col-md-1">筛选条件:</label>
+            <div class="d-inline-flex d-flex align-items-center w-100">
+
+                <div class="col-md-2">
+                    <select class="custom-select custom-select-sm" id="selectedComment">
+                        <option value="0" th:selected="${sort==0}?'selected'">时间降序</option>
+                        <option value="1" th:selected="${sort==1}?'selected'">时间升序</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 form-inline">
+                    <input class="form-control" type="text" id="searchCommentIn" placeholder="关键字搜索"/>
+                    <button type="submit" id="searchComment" class="btn btn-white btn-raised btn-fab btn-round">
+                        <i class="icon-search"></i>
+                    </button>
+                </div>
+            </div>
+            <hr/>
+            <table class="table table-hover">
+                <thead class="text-primary">
+                <tr>
+                    <td>ID</td>
+                    <td>内容</td>
+                    <td>评论人</td>
+                    <td>评论文章</td>
+                    <td>时间</td>
+                    <td>操作</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item,i : ${data.data.list}">
+                    <td th:text="${i.index+1}">1</td>
+                    <td th:text="${item.detail}">我用心跳给你个承诺...</td>
+                    <td th:text="${item.email}">835033913@qq.com</td>
+                    <td><a class="text-danger" target="_blank" th:text="${item.contentTitle}"
+                           th:href="@{'/main/detail/'+${item.contentId}}"></a></td>
+                    <td th:text="${#dates.format(item.createTime,'yyyy/MM/dd  [HH:mm]')}">2018/5/30</td>
+                    <td>
+                        <button type="button" th:onclick="${'deleteClick('+item.commentId+')'}"
+                                class="btn btn-outline-github btn-round btn-sm">
+                            删除
+                        </button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <hr/>
+
+            <!--页码部分代码-->
+            <ul class="pagination d-flex justify-content-center">
+                <li class="page-item " th:classappend="${!data.data.hasPreviousPage}?'disabled'">
+                    <a class="page-link" th:onclick="${'replacePageClick('+data.data.prePage+')'}"><</a>
+                </li>
+                <th:block th:each="item : ${data.data.navigatepageNums}">
+                    <li class="page-item" th:classappend="${item==data.data.pageNum}?'active'">
+                        <a class="page-link" th:onclick="${'replacePageClick('+item+')'}"
+                           th:text="${item}">3</a>
+                    </li>
+                </th:block>
+                <li class="page-item" th:classappend="${!data.data.hasNextPage}?'disabled'">
+                    <a class="page-link" th:onclick="${'replacePageClick('+data.data.nextPage+')'}">></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <a th:href="@{/admin/comment}" class="hide" id="commentUrl"></a>
+
+    <script type="text/plain" th:utext="${urlParam}" id="urlParam">
+
+    </script>
+    <script type="text/javascript">
+
+        var commentUrl = $("#commentUrl").attr("href");
+        var urlParam = $("#urlParam").html();
+        var search = '[[${search}]]';
+
+        /**
+         * 删除一个评论的操作
+         * @param {Object} id
+         */
+        function deleteClick(id) {
+            if (id != null) {
+                $.ajax({
+                    type: "post",
+                    url: commentUrl,
+                    data: {id: id, _method: "delete"},
+                    success: function (data) {
+                        if (data.status == 0) {
+                            item_9();
+                        } else {
+                            swal("ERROR", "出错啦:" + data.msg, "error");
+                        }
+                    },
+                    error: function () {
+                        swal("ERROR", "出错啦:远程服务器没有响应", "error");
+                    }
+                });
+            }
+        }
+
+        $("#selectedComment").change(function () {
+            var sort = $(this).val();
+            if (isNotBlank(search)) {
+                item_9({sort: sort, search: search});
+            } else {
+                item_9({sort: sort});
+            }
+        });
+
+        $("#searchComment").click(function () {
+            var data = $('#searchCommentIn').val();
+            if (!isNotBlank(data)) {
+                swal("非法", "好像忘记输入了吧 (≧∇≦)ﾉ", "warning");
+            } else {
+                item_9({search: data});
+            }
+        });
+
+        function replacePageClick(index) {
+            item_9(urlParam + "&page=" + index);
+        }
+    </script>
+</th:block>

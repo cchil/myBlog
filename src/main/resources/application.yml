@@ -1,0 +1,64 @@
+spring:
+  datasource:
+    #数据库用户名
+    username: root
+    #数据库的密码
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.100.101:3306/blog?useUnicode=true&amp;characterEncoding=UTF-8
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    filters: stat,wall
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  #是否开启页面的缓存 开发下关闭生产环境下开启
+  thymeleaf:
+    cache: false
+  cache:
+    jcache:
+      config: ehcache.xml
+  #文件上传的最大限制
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+  #静态资源文件的压缩
+  resources:
+    chain:
+      gzipped: true
+
+
+mybatis:
+  mapper-locations: mappers/**.xml
+  type-aliases-package: com.cchilei.blog.pojo
+  configuration:
+    cache-enabled: true
+
+
+#文件服务器的地址
+file:
+  root:
+    directory: D://test/fileUpload/
+    url: http://xxxx.com/
+    remote: true
+    accessKey: UxxxxxxEuiCRIUybTmhz6tbziMFcrXb
+    secretKey: TxxxxxxxxxxxxxxxxxGACH8PFm5kqbY
+    bucket: uychen
+    zoneIndex: 1
+
+#打印sql语句
+logging:
+  level:
+    com.cchilei.blog: debug
+  path: /uyblog/log

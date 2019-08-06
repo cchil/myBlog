@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/static/bootstrap3/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/static/bootstrap3/bootstrap-treeview.min.css}">
+    <link th:href="@{/static/css/font-awesome.min.css}" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+    <script th:src="@{/static/bootstrap3/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/bootstrap3/bootstrap-treeview.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery.form.js}"></script>
+    <title>标签管理</title>
+    <style>
+        body{
+            background-color: #EEEEEE;
+            font-family: 微软雅黑;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container" align="center">
+    <h4 class="text-danger" id="tipText"></h4>
+</div>
+
+<div class="container">
+    <h3>标签树</h3>
+    <div class="row">
+        <div id="tree" class="col-sm-3"></div>
+
+        <div class="col-md-1"></div>
+
+        <div class="col-md-8">
+            <div class="container">
+                <div class="row">
+                    <h4>标签管理</h4>
+                    <hr class="col-sm-6"/>
+                </div>
+
+                <div class="row">
+                    <p class="text-primary col-sm-2">当前选中标签为:</p><label class="label label-info"
+                                                                        id="currentName"></label>
+                </div>
+
+                <div class="row">
+                    <p class="text-primary col-sm-2">其父标签为:</p><label id="currentParentName"
+                                                                      class="label label-primary"></label>
+                </div>
+
+                <br/>
+                <div class="row">
+                    <div class="input-group input-group-sm col-md-4">
+                        <span class="input-group-addon">修改名称</span>
+                        <input type="text" id="newName" class="form-control">
+                        <div class="input-group-btn">
+                            <button class="btn btn-success btn-sm" id="updateName">确定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+                <div class="row">
+                    <div class="input-group input-group-sm col-md-4">
+                        <span class="input-group-addon">更改父标签</span>
+                        <select class="form-control" id="selectLabels">
+                            <option th:each=" item,i : ${data}" th:text="${item.getName()}" th:value="${item.id}"
+                                    th:selected="${i.index==0}?'selected'"></option>
+                        </select>
+                        <div class="input-group-btn">
+                            <button class="btn btn-success btn-sm" id="updateParentBtn">确定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+                <div class="row">
+                    <button class="btn btn-danger col-sm-1 btn-sm" id="deleteBtn">删除此标签</button>
+                    <div class="col-sm-1"></div>
+                    <button class="btn btn-primary col-sm-1 btn-sm" data-toggle="modal" data-target="#myModal">新增标签</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form th:action="@{/admin/add-label}" method="post" class="form-horizontal" id="addForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title text-center" id="myModalLabel">添加标签</h4>
+                </div>
+                <div class="modal-body container">
+                    <input type="hidden" name="_method" value="put">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">名称:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="name" placeholder="请输入标签名称" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">父标签:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="parentId">
+                                <option th:each=" item,i : ${data}" th:text="${item.getName()}" th:value="${item.id}"
+                                        th:selected="${i.index==0}?'selected'"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">添加</button>
+                </div>
+
+            </div>
+        </form>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<a class="hide" th:href="@{/admin}" id="serverLocal"></a>
+<script th:src="@{/static/js/admin_request.js}" type="text/javascript"></script>
+<script>
+    var localUrl = document.getElementById('serverLocal').getAttribute("href");
+    //记录着当前的ID
+    var currentId;
+
+    $(function () {
+
+        var data = $.ajax({
+            url: localUrl + "/labels-data",
+            type: "get",
+            dataType: "json",
+            contentType: "application/json",
+            async: false
+        }).responseText;
+
+
+        $('#tree').treeview({
+            data: data,
+            color: "#428bca",
+            expandIcon: 'icon-chevron-right',
+            collapseIcon: 'icon-chevron-down',
+            nodeIcon: 'icon-tag',
+            showTags: true,
+            levels: 2
+        });
+
+        $('#tree').on('nodeSelected', function (event, data) {
+            // 事件代码...
+            $("#currentName").html(data.text);
+            $("#currentParentName").html(data.parentName);
+            currentId = data.id;
+        });
+    });
+
+
+    $("#deleteBtn").click(function () {
+        if (isNotBlank(currentId)) {
+            $.ajax({
+                type: "post",
+                url: localUrl + "/delete-label",
+                data: {_method: "DELETE", id: currentId},
+                success: function (data) {
+                    if (data.status == 0) {
+                        parent.item_5();
+                    } else {
+                        tip(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("ERROR:请求失败");
+                }
+            });
+        } else {
+            alert("请先选择一个标签");
+        }
+    });
+
+    $("#updateParentBtn").click(function () {
+        if (isNotBlank(currentId)) {
+            var id = $("#selectLabels").val();
+            $.ajax({
+                type: "post",
+                url: localUrl + "/update-label",
+                data: {_method: "put", id: currentId, parentId: id},
+                success: function (data) {
+                    if (data.status == 0) {
+                        parent.item_5();
+                    } else {
+                        tip(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("ERROR:请求失败");
+                }
+            });
+        } else {
+            alert("请先选择一个标签");
+        }
+    });
+
+    $("#updateName").click(function () {
+        if (isNotBlank(currentId)) {
+            var name = $("#newName").val();
+            console.log(name);
+            if (!isNotBlank(name)) {
+                $("#newName").attr("placeholder", "不能为空哦！");
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: localUrl + "/update-label",
+                data: {_method: "put", id: currentId, name: name},
+                success: function (data) {
+                    if (data.status == 0) {
+                        parent.item_5();
+                    } else {
+                        tip(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("ERROR:请求失败");
+                }
+            });
+        } else {
+            alert("请先选择一个标签");
+        }
+    });
+
+    $("#addForm").submit(function (e) {
+        $(this).ajaxSubmit(function (data) {
+            if (data.status == 0) {
+                alert("添加成功");
+                parent.item_5();
+            } else {
+                tip(data.msg);
+            }
+        });
+        e.preventDefault();
+    });
+
+    /**
+     * 显示一个提示的信息
+     * @param msg
+     */
+    function tip(msg) {
+        $("#tipText").html(msg);
+    }
+
+</script>
+
+</body>
+
+</html>

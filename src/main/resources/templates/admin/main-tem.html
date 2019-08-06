@@ -1,0 +1,194 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <div class="row" align="center">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header card-header-danger card-header-icon">
+                    <div class="card-icon">
+                        <i class="icon-user icon-2x"></i>
+                    </div>
+                    <p class="card-category">当前在线人数</p>
+                    <h3 class="card-title" th:text="${data.peopleCount}"></h3>
+                </div>
+                <div class="card-footer">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header card-header-danger card-header-icon">
+                    <div class="card-icon">
+                        <i class="icon-file-alt icon-2x"></i>
+                    </div>
+                    <p class="card-category">文章总数</p>
+                    <h3 class="card-title" th:text="${data.contentCount}"></h3>
+                </div>
+                <div class="card-footer">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header card-header-danger card-header-icon">
+                    <div class="card-icon">
+                        <i class="icon-cloud icon-2x"></i>
+                    </div>
+                    <p class="card-category">资源总数</p>
+                    <h3 class="card-title" th:text="${data.resourcesCount}"></h3>
+                </div>
+                <div class="card-footer">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header card-header-danger card-header-icon">
+                    <div class="card-icon">
+                        <i class="icon-info-sign icon-2x"></i>
+                    </div>
+                    <p class="card-category">未处理的消息</p>
+                    <h3 class="card-title" th:text="${data.infoCount}"></h3>
+                </div>
+                <div class="card-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title ">最近发布的文章</h4>
+                <p th:if="${!data.contentList.isEmpty()}" class="card-category" th:text="'最后一次发表文章的日期是:'+
+                ${#dates.format(data.contentList.get(0).time,'yyyy/MM/dd')}"></p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class=" text-primary">
+                        <tr>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                标题
+                            </th>
+                            <th>
+                                内容
+                            </th>
+                            <th>
+                                类别
+                            </th>
+                            <th>
+                                时间
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item,i : ${data.contentList}">
+                            <td th:text="${i.index+1}">
+                            </td>
+                            <td th:text="${item.title}">
+                            </td>
+                            <td th:text="${item.detail}">
+                            </td>
+                            <td th:text="${item.labelsName}">
+                            </td>
+                            <td class="text-primary" th:text="${#dates.format(item.time,'yyyy/MM/dd')}">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">未处理的消息</h4>
+                <p th:if="${!data.commentInfo.list.isEmpty()}" class="card-category" th:text="'最近消息发生于 '+
+                ${#dates.format(data.commentInfo.list.get(0).createTime,'yyyy/MM/dd')}"></p>
+            </div>
+            <button onclick="deleteClick(-15615)" class="btn btn-default btn-sm ml-5 mr-5">全部已读</button>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead class="text-warning">
+                    <tr>
+                        <th>ID</th>
+                        <th>内容</th>
+                        <th>评论人</th>
+                        <th>评论文章</th>
+                        <th>时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item ,i : ${data.commentInfo.getList()}">
+                        <td th:text="${i.index+1}"></td>
+                        <td th:text="${item.detail}"></td>
+                        <td th:text="${item.email}"></td>
+                        <td><a class="text-danger" target="_blank" th:text="${item.contentTitle}"
+                               th:href="@{'/main/detail/'+${item.contentId}}"></a></td>
+                        <td th:text="${#dates.format(item.createTime,'yyyy/MM/dd  [HH:mm]')}"></td>
+                        <td>
+                            <button th:onclick="${'deleteClick('+item.commentId+')'}"
+                                    class="btn btn-outline-info btn-sm">已读
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <hr/>
+                <!--页码部分代码-->
+                <ul class="pagination d-flex justify-content-center">
+                    <li class="page-item " th:classappend="${!data.commentInfo.hasPreviousPage}?'disabled'">
+                        <a class="page-link" th:onclick="${'replacePageClick('+data.commentInfo.prePage+')'}"><</a>
+                    </li>
+                    <th:block th:each="item : ${data.commentInfo.navigatepageNums}">
+                        <li class="page-item" th:classappend="${item==data.commentInfo.pageNum}?'active'">
+                            <a class="page-link" th:onclick="${'replacePageClick('+item+')'}"
+                               th:text="${item}">3</a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${!data.commentInfo.hasNextPage}?'disabled'">
+                        <a class="page-link" th:onclick="${'replacePageClick('+data.commentInfo.nextPage+')'}">></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <a th:href="@{/admin}" class="hide" id="serverUrl"></a>
+    <script type="text/javascript">
+        var serverUrl = document.getElementById("serverUrl").getAttribute("href");
+
+        function deleteClick(id) {
+            if(id!=null){
+                 $.ajax({
+                     type: "post",
+                     url: serverUrl+"/delete-comment-info",
+                     data: {id:id,_method:"delete"},
+                     success:function (data) {
+                         if (data.status == 0) {
+                             item_1();
+                         } else {
+                             swal("ERROR", "出错啦:" + data.msg, "error");
+                         }
+                     },
+                     error:function () {
+                         swal("ERROR", "出错啦:远程服务器没有响应", "error");
+                     }
+                 });
+            }else{
+                swal("获取参数错误");
+            }
+        }
+        
+        function replacePageClick(page) {
+            item_1(page);
+        }
+    </script>
+</th:block>

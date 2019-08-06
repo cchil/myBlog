@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <!--<link rel="icon" type="image/x-icon" th:href="@{/static/img/favicon.ico}">-->
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <title>
+        后台仪表盘
+    </title>
+    <link rel="stylesheet" th:href="@{/static/css/material-dashboard.min.css}">
+    <link th:href="@{/static/css/font-awesome.min.css}" rel="stylesheet">
+    <script th:src="@{/static/js/jquery.min.js}"></script>
+    <style>
+        body{
+            font-family: 微软雅黑;
+        }
+    </style>
+</head>
+
+<body class="">
+<div class="wrapper">
+    <div class="sidebar" data-color="azure" data-background-color="purple">
+        <!--
+    Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+    Tip 2: you can also add an image using data-image tag
+-->
+        <div class="logo">
+            <a  class="simple-text logo-normal">
+                仪表盘
+            </a>
+        </div>
+        <div class="sidebar-wrapper">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,1)" id="mainItem">
+                        <span data-feather="home"></span>
+                        仪表板
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,2)">
+                        <span data-feather="file"></span> 我的资源
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,3)">
+                        <span data-feather="clipboard"></span> 我的文章
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,4)">
+                        <span data-feather="user"></span> 用户管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,5)">
+                        <span data-feather="tag"></span> 标签管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,6)">
+                        <span data-feather="file-plus"></span> 发布文章
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,7)">
+                        <span data-feather="upload-cloud"></span> 发布资源
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,8)">
+                        <span data-feather="align-right"></span>个性化
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,9)">
+                        <span data-feather="message-circle"></span> 评论管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="replace(this,10)">
+                        <i data-feather="info"></i> 关于
+                    </a>
+                </li>
+                <li class="nav-item active-pro">
+                    <a class="nav-link" th:href="@{/admin/logout}">
+                        <i class="icon-signout"></i>
+                        <p>退出登录</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-panel">
+        <!-- Navbar -->
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent  navbar-absolute fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <h3 class="navbar-brand text-success">欢迎您</h3>
+                </div>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+
+        <div class="content">
+            <div class="container-fluid" id="main">
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<script th:src="@{/static/js/popper.min.js}"></script>
+<script th:src="@{/static/js/bootstrap-material-design.min.js}"></script>
+<script th:src="@{/static/js/perfect-scrollbar.jquery.min.js}"></script>
+<script th:src="@{/static/js/jquery.form.js}"></script>
+<script th:src="@{/static/js/feather.min.js}"></script>
+<script th:src="@{/static/js/jquery.dotdotdot.js}"></script>
+<script th:src="@{/static/js/sweetalert.min.js}"></script>
+<!--引入动画-->
+<script th:src="@{/static/js/jquery-ui.min.js}"></script>
+<script th:src="@{/static/js/admin_request.js}"></script>
+<a th:href="@{/admin}" id="localUrl" class="hide"></a>
+<!-- Icons -->
+<script type="text/javascript">
+    feather.replace();
+
+    var localUrl = document.getElementById('localUrl').getAttribute("href");
+    var currentFragment;
+    var currentIndex = 0;
+
+    /**
+     * 动态改变侧边栏的激活状态
+     * @param {Object} tag
+     */
+    function replace(tag, index) {
+        tag = $(tag).parent();
+        if (currentFragment != null) {
+            $(currentFragment).attr("class", "nav-item");
+        }
+        currentFragment = tag;
+        $(tag).attr("class", "nav-item active");
+        if (currentIndex == index) {
+            return;
+        }
+        //设置点击事件的触发器
+        currentIndex = index;
+        leftClick(index);
+    }
+
+    /**
+     * 切换左边菜单栏的状态 JS 代码控制的方法调用
+     */
+    function replaceLeftStatusByJs(index) {
+        if (index <= 0) {
+            index = 1;
+        }
+        index--;
+        var item = $("div[class='sidebar-wrapper']").find("li")[index];
+        if (currentFragment != null) {
+            $(currentFragment).attr("class","nav-item")
+        }
+        currentFragment = item;
+        ++index;
+        $(item).attr("class", "nav-item active");
+        if (currentIndex == index) {
+            return;
+        }
+        //设置点击事件的触发器
+        currentIndex = index;
+    }
+
+    /**
+     * 左边的item列表的点击事件
+     * @param index
+     */
+    function leftClick(index) {
+        switch (index) {
+            case 1:
+                item_1();
+                break;
+            case 2:
+                item_2();
+                break;
+            case 3:
+                item_3();
+                break;
+            case 4:
+                item_4();
+                break;
+            case 5:
+                item_5();
+                break;
+            case 6:
+                item_6(1);
+                break;
+            case 7:
+                item_7();
+                break;
+            case 8:
+                item_8();
+                break;
+            case 9:
+                item_9();
+                break;
+            case 10:
+                item_10();
+                break;
+            default:
+                updateFragment("<h2>Hello Im Empty" + index + "</h2>");
+                break;
+        }
+    }
+
+
+    $(window).load(function () {
+        item_1();
+        replaceLeftStatusByJs(1);
+    });
+</script>
+</body>
+
+</html>

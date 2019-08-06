@@ -1,0 +1,51 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title th:text="${session.settings.mainTitle}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileColor" content="#0e90d2">
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/app.css}">
+    <script th:src="@{/static/js/jquery.min.js}"></script>
+</head>
+
+<body id="blog-article-sidebar" ng-app="myApp" ng-controller="commentList">
+
+<!--公共头部开始-->
+<div th:replace="/front/head :: head(index=-1)">
+</div>
+<!--公共头部结尾-->
+
+
+<!-- content srart -->
+<div class="am-g am-g-fixed blog-fixed blog-content">
+    <div class="am-u-md-8 am-u-sm-12">
+        <br>
+        <h1 class="am-text-xl am-text-center am-center">Oh NO</h1>
+        <hr>
+        <h3 class="am-text-center am-text-danger am-center" th:text="${defaultData}"></h3>
+    </div>
+
+    <div th:replace="/front/about :: about"/>
+</div>
+<!-- content end -->
+
+<!--底部-->
+<div th:replace="/front/footer :: footer"/>
+
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<!--Js相关代码-->
+
+</body>
+</html>

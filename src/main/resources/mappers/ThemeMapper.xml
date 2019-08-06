@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchilei.blog.dao.ThemeMapper">
+
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+    <resultMap id="BaseResultMap" type="com.cchilei.blog.pojo.Theme">
+        <constructor>
+            <arg column="main_bg" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="theme_css" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="theme_js" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+    <select id="select" resultMap="BaseResultMap">
+        SELECT * from theme
+        where id = 1
+    </select>
+
+    <update id="update" parameterType="com.cchilei.blog.pojo.Theme">
+        update theme
+        <set>
+            <if test="mainBg!=null">
+                main_bg = #{mainBg}
+            </if>
+            <if test="themeCss != null">
+                theme_css = #{themeCss}
+            </if>
+            <if test="themeJs != null">
+                theme_js = #{themeJs}
+            </if>
+        </set>
+        where id = 1
+    </update>
+
+</mapper>

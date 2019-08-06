@@ -1,0 +1,174 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="contentManage">
+    <style>
+        .box-shadow {
+            box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+        }
+
+        .bg-white {
+            background-color: #fff !important;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .text-gray-dark {
+            color: black;
+        }
+    </style>
+    <div class="">
+        <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-danger box-shadow">
+            <div class="lh-100">
+                <h6 class="mb-0 text-white lh-100">文章管理</h6>
+                <small>MANAGE</small>
+            </div>
+        </div>
+
+        <div class="my-3 p-3 bg-white rounded box-shadow">
+            <div class="border-bottom border-gray form-inline">
+
+                <form action="#" method="get" id="searchForm" class="d-sm-inline-flex">
+
+                    <div class="d-sm-inline-flex">
+
+                        <select class="custom-select custom-select-sm " id="selectLabels">
+                            <option th:each="item:${data.labels}" th:value="${item.id}"
+                                    th:text="${item.name}"
+                                    th:selected="${data.currentLabelsId!=null && data.currentLabelsId==item.id}?'selected'">
+                                上海
+                            </option>
+                        </select>
+                    </div>
+                    <div style="width: 50px;"></div>
+                    <div class="input-group">
+                        <input class="form-control" type="text" placeholder="关键字查找" name="search" required/>
+                        <!-- <div class="input-group-append">-->
+                        <button class="btn btn-outline-info btn-sm ml-3" type="submit">查找</button>
+                        <!-- </div>-->
+                    </div>
+                </form>
+
+            </div>
+            <!--正文循环-->
+            <div class="media text-muted pt-3" th:each="item : ${data.getContents().list}">
+                <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                    <strong class="d-block text-gray-dark"><a target="_blank" th:href="@{'/main/detail/'+${item.id}}"
+                                                              th:text="${item.title}">测试文章</a></strong>
+                    <th:block th:text="${item.detail.substring(0,(item.detail.length()<80?item.detail.length():80))}">
+
+                    </th:block>
+                </p>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm"
+                            data-toggle="dropdown">
+                        操作
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <button class="dropdown-item btn-sm"
+                                th:onclick="${'updateContent('+item.id+','+item.getContentType()+')'}">更新
+                        </button>
+                        <button class="dropdown-item btn-sm" th:onclick="${'contentTop('+item.id+')'}">设置置顶</button>
+                        <button class="dropdown-item btn-sm" th:onclick="${'deleteContent('+item.id+')'}">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--结束正文-->
+
+        <!--放置页码部分-->
+        <br/>
+        <div class="container">
+            <div class="row" align="center">
+                <ul class="pagination mx-auto">
+                    <li class="page-item" th:classappend="${!data.contents.hasPreviousPage?'disabled':''}">
+                        <a class="page-link" th:onclick="'pageReplace('+${data.contents.prePage}+')'">&laquo;</a>
+                    </li>
+                    <th:block th:each="item : ${data.contents.navigatepageNums}">
+                        <li th:class="${item==data.contents.pageNum?'page-item active':'page-item'}">
+                            <a class="page-link" th:onclick="${'pageReplace('+item+')'}" th:text="${item}"></a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${!data.contents.hasNextPage?'disabled':''}">
+                        <a class="page-link" th:onclick="'pageReplace('+${data.contents.nextPage}+')'">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <a class="hide" th:href="@{/admin/}" id="localUrl"></a>
+    <script type="text/javascript">
+        /**
+         * 监听下拉框的改变事件
+         */
+        $('#selectLabels').change(function () {
+            var selectedIndex = $('#selectLabels').val();
+            var url = localUrl + "content-manage?labelId=" + selectedIndex;
+            $.get(url, function (d, s, t) {
+                updateFragment(t.responseText);
+            });
+        });
+
+        function deleteContent(id) {
+            var url = localUrl + "delete-content";
+            $.ajax({
+                type: "post",
+                url: url,
+                data: {id: id, _method: "delete"},
+                success: function (data) {
+                    if (data.status == 0) {
+                        pageReplace(1);
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("ERROR:请求失败!");
+                }
+            });
+        }
+
+        function updateContent(id, type) {
+            var url = localUrl + "handle-content?type=" + type + "&id=" + id;
+            $.get(url, function (d, s, t) {
+                updateFragment(t.responseText);
+            });
+        }
+
+        /**
+         * 设置文章置顶
+         * @param id
+         */
+        function contentTop(id) {
+            if (id == null) {
+                swal("系统提示", "文章信息获取失败", "error");
+                return;
+            }
+            $.get(localUrl + "content-top", {id: id}, function (data) {
+                if (data.status == 0) {
+                    swal("系统提示", "SUCCESS:" + data.msg, "success");
+                } else {
+                    swal("系统提示", "ERROR:" + data.msg, "error");
+                }
+            });
+        }
+
+        $('#searchForm').submit(function (e) {
+            var data = $('#searchForm').serialize();
+            var url = localUrl + "content-manage?" + data;
+            $.get(url, function (d, s, t) {
+                updateFragment(t.responseText);
+            });
+            e.preventDefault();
+        });
+
+        var requestUrl = '[[${data.requestUrl}]]' + "&page=";
+
+        var localUrl = document.getElementById("localUrl").getAttribute("href");
+
+        function pageReplace(index) {
+            $.get(requestUrl + index, function (d, s, t) {
+                updateFragment(t.responseText);
+            });
+        }
+    </script>
+</th:block>

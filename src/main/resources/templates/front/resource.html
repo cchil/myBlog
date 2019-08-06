@@ -1,0 +1,87 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title th:text="${session.settings.mainTitle}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <meta name="msapplication-TileColor" content="#0e90d2">
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/app.css}">
+</head>
+
+<body id="blog-article-sidebar">
+<!--公共头部开始-->
+<div th:replace="/front/head :: head(index=3)">
+</div>
+<!--公共头部结尾-->
+
+<!-- content srart -->
+<div class="am-g am-g-fixed blog-fixed blog-content">
+    <div class="am-u-md-8 am-u-sm-12">
+        <!--开始的地方-->
+
+        <div data-am-widget="list_news" class="am-list-news am-list-news-default">
+            <!--列表标题-->
+            <div class="am-list-news-hd am-cf">
+                <!--带更多链接-->
+
+            </div>
+
+            <div class="am-list-news-bd">
+                <ul class="am-list">
+                    <li class="am-g" th:each="item:${data.data.list}">
+                            <a th:href="${item.url}" target="_blank"
+                               class="am-list-item-hd am-text-danger" th:text="${item.title}"></a>
+
+                        <small class="am-text-truncate am-fl" th:text="${item.detail}"></small>
+                        <p class="am-fr"  th:text="${#dates.format(item.createTime,'yyyy/MM/dd')}"></p>
+
+                    </li>
+                </ul>
+            </div>
+
+            <!--分页使用-->
+            <br/>
+            <ul data-am-widget="pagination" class="am-pagination am-pagination-select">
+
+                <li class="am-pagination-prev">
+                    <a th:href="@{/main/resources(page=${!data.data.hasPreviousPage?1:data.data.prePage})}" class="">上一页</a>
+                </li>
+
+                <li class="am-pagination-select">
+                    <h2 th:text="${data.data.pageNum}+'/'+${data.data.pages}">1/5</h2>
+                </li>
+
+                <li class="am-pagination-next ">
+                    <a th:href="@{/main/resources(page=${!data.data.hasNextPage?1:data.data.nextPage})}" class="">下一页</a>
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!--结束的地方-->
+    </div>
+
+    <div th:replace="/front/about :: about"/>
+</div>
+<!-- content end -->
+
+<!--底部-->
+<div th:replace="/front/footer :: footer"/>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+
+</body>
+
+</html>

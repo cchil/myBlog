@@ -1,0 +1,59 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>BLOG</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <meta name="msapplication-TileColor" content="#0e90d2">
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/app.css}">
+</head>
+<body>
+
+<div class="log"> 
+  <div class="am-g">
+  <div class="am-u-lg-3 am-u-md-6 am-u-sm-8 am-u-sm-centered log-content">
+    <h1 class="log-title am-animation-slide-top">Uychen-Admin</h1>
+    <br>
+
+      <div>
+          <h5 style="color: #ffd9ce;" th:text="${login_msg}">ERROR</h5>
+      </div>
+
+    <form class="am-form" id="log-form" method="post" th:action="@{/admin/login-from}">
+      <div class="am-input-group am-radius am-animation-slide-left">       
+        <input type="text" id="doc-vld-email-2-1" name="name" class="am-radius" data-validation-message="请输入用户名" placeholder="用户名" required/>
+        <span class="am-input-group-label log-icon am-radius"><i class="am-icon-user am-icon-sm am-icon-fw"></i></span>
+      </div>      
+      <br>
+      <div class="am-input-group am-animation-slide-left log-animation-delay">       
+        <input type="password" class="am-form-field am-radius log-input" name="pwd" placeholder="密码" minlength="3" required>
+        <span class="am-input-group-label log-icon am-radius"><i class="am-icon-lock am-icon-sm am-icon-fw"></i></span>
+      </div>      
+      <br>
+      <button type="submit" class="am-btn am-btn-primary am-btn-block am-btn-lg am-radius am-animation-slide-bottom log-animation-delay">登 录</button>
+    </form>
+  </div>
+  </div>
+  <footer class="log-footer">   
+    © 2018 Blog Background Admin.
+  </footer>
+</div>
+
+
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<script th:src="@{/static/js/app.js}"></script>
+</body>
+</html>

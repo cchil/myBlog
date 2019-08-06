@@ -1,0 +1,179 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="markdown">
+    <link rel="stylesheet" th:href="@{/static/md/editormd.min.css}"/>
+    <script type="text/javascript" th:src="@{/static/md/editormd.min.js}"></script>
+
+    <ul class="nav nav-tabs" >
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#menu1"><h6 class="text-danger">MarkDown编辑器</h6></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#menu2" onclick="replaceMenu()"><h6 class="text-dark">富文本编辑器</h6></a>
+        </li>
+    </ul>
+    <br/>
+
+    <!--头部 输入内容-->
+    <div class="container">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">标题</span>
+            </div>
+            <input type="text" id="title" class="form-control" placeholder="请输入标题内容" aria-label="Username"
+                   aria-describedby="basic-addon1" th:value="${data.title}">
+        </div>
+
+        <div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">类别</span>
+                </div>
+                <select class="form-control" id="selectLabels">
+                    <option th:each="item:${data.labels}" th:value="${item.id}"
+                            th:text="${item.name}"
+                            th:selected="${data.labelId!=null && data.labelId==item.id}?'selected'">上海
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+
+        <div id="menu1" class="container tab-pane active"><br>
+
+            <div class="h-100 w-100">
+                <div id="markdown">
+                    <textarea id="markDetail" style="display:none;" th:utext="${data.detail}">
+
+                    </textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br>
+    <div class="container">
+        <button class="btn btn-danger" type="button" onclick="onClickForClear()">清空</button>
+        &nbsp;&nbsp;
+        <button class="btn btn-success" type="button" onclick="getContent()">提交</button>
+    </div>
+    <br> <br>
+    </div>
+    <!--Markdown Js-->
+    <script type="text/javascript">
+        var md;
+        $(function () {
+            md = editormd("markdown", { //注意1：这里的就是上面的DIV的id属性值
+                width: "100%",
+                height: 600,
+                //syncScrolling: "single",
+                path: urlPrefix + "/", //注意2：你的路径
+                saveHTMLToTextarea: true, //注意3：这个配置，方便post提交表单
+                emoji: true, //emoji表情，默认关闭
+                taskList: true,
+                tocm: true, // Using [TOCM]
+                tex: true, // 开启科学公式TeX语言支持，默认关闭
+                /**上传图片相关配置如下*/
+                imageUpload: true,
+                imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL: serverUrl+"/mark-upload"
+            });
+        });
+    </script>
+
+    <!--获取服务器的中 md/lib文件路径的前缀-->
+    <a th:href="@{/static/md/lib}" class="hide" id="urlPrefix"></a>
+
+    <!--获取服务器地址-->
+    <a th:href="@{/admin}" class="hide" id="serverUrl"></a>
+
+    <div th:replace="/util :: bootalert(msg='Error')"></div>
+
+    <!--获取内容的  JS MD用-->
+    <script type="text/javascript">
+        //服务器的 md/lib文件地址前缀
+        var urlPrefix = document.getElementById("urlPrefix").getAttribute("href");
+
+        //服务器地址路径
+        var serverUrl = document.getElementById("serverUrl").getAttribute("href");
+
+        function getContent() {
+            var content = $('#markDetail').val();
+            var title = $('#title').val();
+            var labelId = $('#selectLabels').val();
+
+            console.log("content:" + content + "-title:" + title + "-labelsId:" + labelId);
+
+            //1代表Markdown类型的文本
+            var contentType = 1;
+            //是更新还是创建
+            var contentId = [[${data.id!=null?data.id:-100}]];
+            //在这里判断
+
+            if (!isNotBlank(content) || !isNotBlank(title) || !isNotBlank(labelId)) {
+                alert("请输入完整内容");
+                return;
+            }
+
+            var html = '<div id="doc-content"><textarea style="display:none;">' + content + '</textarea></div>';
+            html += '<script>var testEditor;$(function() {testEditor = editormd.markdownToHTML("doc-content", {htmlDecode: "style,script,iframe",emoji: true,taskList: true,tex: true,flowChart: true, sequenceDiagram: true,codeFold: true,});});';
+            html += '<\/script>';
+            //添加scpript js
+            html += '<script src="' + urlPrefix + '/marked.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/prettify.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/raphael.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/underscore.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/sequence-diagram.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/flowchart.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/jquery.flowchart.min.js"><\/script>';
+            html += '<script src="' + urlPrefix + '/editormd.min.js"><\/script>';
+            console.log(html);
+
+            var boot_alert = $('#my-boot-alert');
+
+            //发送请求
+            $.ajax({
+                type: 'post',
+                url: serverUrl + "/create-update-content",
+                data: {_method: "put", id: contentId, detail: html, labelId: labelId, title: title, contentType: contentType},
+                success: function (d, s, t) {
+                    var resultMsg = d.msg;
+                    $('#my-boot-alert-text').html(resultMsg);
+                    boot_alert.modal('show');
+                    console.log(d);
+                },
+                error: function () {
+                    alert("ERROR:出错啦!")
+                }
+            });
+        }
+
+        /**
+         * 点击关闭按钮的响应事件
+         */
+        $("#my-boot-alert-dismiss").click(function () {
+            $('.modal-backdrop').remove();
+            replaceLeftStatusByJs(3);
+            item_3($('#selectLabels').val());
+        });
+
+        /**
+         * 清除内容
+         */
+        function onClickForClear() {
+            console.log("Clear");
+            $('i[name="clear"]').click();
+        }
+
+        /**
+         * 切换到 富文本编辑器的状态
+         */
+        function replaceMenu() {
+            $.get(localUrl + '/handle-content?type=0', function (d, s, t) {
+                var result = t.responseText;
+                updateFragment(result);
+            });
+        }
+    </script>
+</th:block>

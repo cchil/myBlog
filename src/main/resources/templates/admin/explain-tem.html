@@ -1,0 +1,169 @@
+<div id="doc-content"><textarea style="display:none;"># Uyblog
+
+### 引言
+
+1. 编写目的
+
+   编写本使用说明的目的是充分叙述本软件所能实现的功能及其运行环境，以便使用者了解本软件的使用范围和使用方法！
+
+2. 参考资料： http://www.uychen.com
+
+3. 交流群 遇到问题可以进群资讯 （QQ群：676436122）
+
+
+
+### 系统使用注意事项
+
+ -  系统中所有文件的上传大小限制于100MB以内（超过会报错）
+
+ -  系统中默认配置的是使用本机作为文件服务器
+
+ -  默认的系统端口为80端口
+
+ -  在模块用户管理中：更新我的个人信息为选择性更新
+
+ -  个性化设置模块
+
+     - 添加新配置默认使用的是以基础数据为模板创建新的配置文件
+     - 默认配置无法进行任何更新操作
+     - 删除配置将不可恢复
+     - 在更新关于本站中，建议在电脑中预先编辑好Markdown格式文本这样比较排版清晰 之后粘贴在网页编辑器内即可
+     - 每个修改项对应一个保存，没修改好一个模块建议先保存在做其他更新操作
+
+- 关于修改系统默认的文件上传大小的限制操作：
+
+  - 系统默认大小限制为100MB
+
+  - 修改服务配置文件
+
+  - 两种方式：
+
+    - 1.  （第一种 ） 在application.properties文件修改操作 在路径【UyBlog\application.properties】
+      2.  添加代码`spring.servlet.multipart.max-request-size=100MB`  (这里的大小自定义即可)
+      3.  添加代码`spring.servlet.multipart.max-file-size=100MB ` （与上面保持一致即可）
+      4.  不能有多余的空格 代码前后都不能有多余的空格存在
+      5.  格式保持统一，确认无误 重启服务器即可 完成！！
+
+    - 1. （第二种 不推荐） 在项目 目录修改  yml核心文件
+
+      2. 路径为：【UyBlog\server\webapps\blog\WEB-INF\classes\application.yml】
+
+      3.   ```yml
+         #文件上传的最大限制
+           servlet:
+             multipart:
+               max-request-size: 100MB
+               max-file-size: 100MB
+         ```
+
+      4. 在修改的地方： 之后要留有一个空格在写 xxxMB
+
+  - 修改系统启动的端口号：
+
+    - 在目录【UyBlog\application.properties】 配置文件中
+    - 修改 `uyblog.server.port=80`  后面的数字即代表端口号
+    - 重启服务器即可
+
+- 修改默认的文件服务器
+
+  - 默认文件服务器是使用本机作为文件服务器
+
+    - 1. 配置本机文件服务器的方式
+
+      2. 配置文件 在目录【UyBlog\application.properties】 配置文件中
+
+      3. ```properties
+         file.root.directory=/home/myFileServer/
+         file.root.remote=false
+         file.root.url=http://xxx.xxx.xxx:prot/root/
+         ```
+
+      4. 如上配置为作为本机当做服务器所需的配置
+
+      5. 代码概述
+
+      6. `file.root.directory` 代表你要映射的本机下那个文件作为存储的介质（即文件上传都上传到这个目录下） 结尾带上 /
+
+      7. `file.root.remote` 重要 设置为fasle  代表使用本机作为文件服务器
+
+      8. `file.root.url` 代表访问的地址  xxx.xxx.xxx填写您的服务器地址 不可为localhost和127.0.0.1后面的port是你服务器的地址 和你的服务端口保持一致即可 后面的/root/不要修改
+
+    - 配置七牛云作为文件服务器
+
+      1. ```properties
+         file.root.zone-index=1
+         file.root.bucket=uychen
+         file.root.secret-key=TD0L_1P6JMBDDDWWW662666K6RROScGACH8PFm5kqbY
+         file.root.access-key=U9eoEzVvvVlbguFPAAASSSTmhz6555488tbziMFcrXb
+         file.root.remote=true
+         file.root.url=http://p9aa1ez6q.bkt.clouddn.com/
+         ```
+
+      2. 如上配置为作为本机当做服务器所需的配置
+
+      3. 以上配置的信息 来源于您注册七牛云所提供的
+
+      4. `file.root.zone-index` 这里代表您所创建的空间地区代码 具体参数：
+
+         | 机房   | 参数   |
+         | ---- | ---- |
+         | 华东   | `0`  |
+         | 华北   | `1`  |
+         | 华南   | `2`  |
+
+      5. sk 和 ak 参照个人中心中的密匙
+
+      6. `file.root.bucket `填写您创建的空间名称
+
+      7. `file.root.url` 填写您绑定的域名 结尾加上 /
+
+- **自定义Html页面的方式**：
+
+  - 在目录：【UyBlog\server\webapps\blog\WEB-INF\classes】
+
+  - 【index.html】 就是首页
+
+  - 【static】 目录存放所需要的css样式 js文件 等...
+
+  - 【templates】目录存放的是所有的Html文件
+
+  - 【templates\front】目录 为所有的用户端展示的html
+
+  - 【templates\admin】目录为 所有的后台管理的展示Html
+
+  - 修改的注意事项：
+
+    - 所有的 `th:` 开头的均不能删除  部分看情况修改 或删除
+
+    - 如果自定义调用css样式 或 js 文件如果选择放在static目录下
+
+      用法：th:src"@{/static/xxx/xxx/xx.js}"
+
+      或者: src="../static/xxx/xxx.js"
+
+      或者选择 放在同级别下
+
+      使用相对路径 （对相对路径不了解 可以先简单的百度学习下）
+
+    - 关于th: 用法的参考链接 https://blog.csdn.net/u014042066/article/details/75614906
+
+  - 默认修改后 刷新页面是不起效果的，需要从新启动服务器
+
+  - 解决方案：热更新的方法:
+
+    - 修改核心配置文件 路径【UyBlog\server\webapps\blog\WEB-INF\classes\application.yml】
+
+    - 修改为 `false`
+
+      ```yaml
+      #是否开启页面的缓存 开发下关闭生产环境下开启
+        thymeleaf:
+          cache: false
+      ```
+
+-  接入Nginx 服务器  --提高访问性能  关于Nginx的作用请参考百度   接入流程请关注 http://www.uychen.com
+
+</textarea>
+</div>
+<script src="/static/md/lib/marked.min.js"></script><script src="/static/md/lib/prettify.min.js"></script><script src="/static/md/lib/raphael.min.js"></script><script src="/static/md/lib/underscore.min.js"></script><script src="/static/md/lib/sequence-diagram.min.js"></script><script src="/static/md/lib/flowchart.min.js"></script><script src="/static/md/lib/jquery.flowchart.min.js"></script><script src="/static/md/lib/editormd.min.js"></script>
+<script>var testEditor;$(function() {testEditor = editormd.markdownToHTML("doc-content", {htmlDecode: "style,script,iframe",emoji: true,taskList: true,tex: true,flowChart: true, sequenceDiagram: true,codeFold: true,});});</script>

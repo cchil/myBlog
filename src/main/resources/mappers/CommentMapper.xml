@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchilei.blog.dao.CommentMapper">
+
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+    <resultMap id="BaseResultMap" type="com.cchilei.blog.pojo.Comment">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="content_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="detail" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, content_id, email, name, detail, create_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from comment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.cchilei.blog.pojo.Comment">
+    insert into comment (id, content_id, email, 
+      name, detail, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{contentId,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.cchilei.blog.pojo.Comment">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="contentId != null">
+                content_id,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="contentId != null">
+                #{contentId,jdbcType=INTEGER},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cchilei.blog.pojo.Comment">
+        update comment
+        <set>
+            <if test="contentId != null">
+                content_id = #{contentId,jdbcType=INTEGER},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cchilei.blog.pojo.Comment">
+    update comment
+    set content_id = #{contentId,jdbcType=INTEGER},
+      email = #{email,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectCommentByContentId" parameterType="integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+        where content_id=#{id}
+    </select>
+
+    <!--<select id="selectCommentAll" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+        <where>
+            <if test="search!=null">
+                detail like "%"#{search}"%"
+            </if>
+        </where>
+        order by create_time #{sort}
+    </select>-->
+
+    <resultMap id="commentVoMap" type="com.cchilei.blog.vo.CommentVo">
+        <id property="commentId" column="comment_id"/>
+        <result property="contentId" column="content_id"/>
+        <result property="contentTitle" column="title"/>
+        <result property="createTime" column="create_time"/>
+        <result property="detail" column="detail"/>
+        <result property="email" column="email"/>
+    </resultMap>
+
+    <select id="selectCommentAll" resultMap="commentVoMap" parameterType="map">
+        select
+        comment.id as comment_id,content.id as content_id,content.title,comment.create_time,comment.detail,comment.email
+        from comment join content on comment.content_id=content.id
+        <where>
+            <if test="search!=null">
+                comment.detail like #{search}
+            </if>
+        </where>
+        order by comment.create_time ${sort}
+    </select>
+</mapper>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title th:text="${session.settings.mainTitle}"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/ico" th:href="@{/static/img/favicon.ico}">
+    <meta name="apple-mobile-web-app-title" content="UyBlog"/>
+    <meta name="msapplication-TileColor" content="#0e90d2">
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/app.css}">
+</head>
+
+<body id="blog">
+
+<!--公共头部开始-->
+<div th:replace="/front/head :: head (index=0)">
+</div>
+<!--公共头部结尾-->
+
+<!-- content srart -->
+<div class="am-g am-g-fixed blog-fixed">
+    <div class="am-u-md-8 am-u-sm-12">
+
+        <!--开始点-->
+        <article class="am-g blog-entry-article" th:each="item : ${data.data.getList()}">
+            <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-img">
+                <img th:src="@{/static/i/f12.jpg}" alt="" class="am-u-sm-12">
+            </div>
+            <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
+                <span><a class="blog-color" th:text="'阅读量: '+${item.readCount}+'&nbsp;'"></a></span>
+                <span th:utext="'@'+${session.myAccount.name}+' &nbsp;'"></span>
+                <span th:text="${#dates.format(item.createTime,'yyyy/MM/dd')}">2015/10/9</span>
+                <h1><a th:href="@{'/main/detail/'+${item.id}}" target="_blank" th:text="${item.title}">世间所有的相遇，都是久别重逢。</a></h1>
+                <p th:text="${item.detail}" style="display: -webkit-box;-webkit-line-clamp: 3;-webkit-box-orient: vertical;overflow: hidden;">
+                    内容的大概预览部分
+                </p>
+            </div>
+        </article>
+
+        <!--结束点-->
+
+        <ul class="am-pagination">
+            <li class="am-pagination-prev" th:classappend="${!data.data.hasPreviousPage}?'am-disabled'">
+                <a th:href="@{${localUrl}+${data.data.prePage}}">&laquo; 上一页</a>
+            </li>
+            <li class="am-pagination-next" th:classappend="${!data.data.hasNextPage}?'am-disabled'">
+                <a th:href="@{${localUrl}+${data.data.nextPage}}">下一页 &raquo;</a>
+            </li>
+        </ul>
+
+    </div>
+
+    <!--右边的简介-->
+    <div th:replace="/front/about :: about"/>
+</div>
+<!-- content end -->
+
+<!--底部-->
+
+<div th:replace="/front/footer :: footer"></div>
+
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+
+</body>
+<script type="text/javascript" th:inline="javascript">
+    function random() {
+        /*<![CDATA[*/
+        var param = /*[[${session.settings.viewContentItem}]]*/ null;
+        /*]]>*/
+        var max = [[${session.settings.viewContentItem.size}]] - 1;
+        var min = 0;
+        var index = parseInt(Math.random() * (max - min + 1) + min);
+        return param.href[index];
+    }
+
+    function setImageSrc() {
+        $('article').each(function () {
+            $(this).find('img').each(function () {
+                this.src = random();
+            });
+        });
+    }
+
+    $(window).load(function () {
+        setImageSrc();
+    });
+</script>
+</html>
