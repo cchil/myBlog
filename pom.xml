@@ -8,8 +8,8 @@
     <version>0.0.1-RELEASE</version>
     <packaging>jar</packaging>
 
-    <name>blog</name>
-    <description>UyBlog</description>
+    <name>myBlog</name>
+    <description>myBlog</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

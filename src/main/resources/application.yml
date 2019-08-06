@@ -61,4 +61,4 @@ file:
 logging:
   level:
     com.cchilei.blog: debug
-  path: /uyblog/log
+  path: /myBlog/log

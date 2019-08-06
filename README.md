@@ -1,4 +1,4 @@
-# Uyblog
+# myBlog
 
 #### 项目介绍
 轻量级基于Spring Boot的博客系统
